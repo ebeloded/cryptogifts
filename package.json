@@ -1,0 +1,13 @@
+{
+  "name": "crypto-gift-cards",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "Evgenij (Eugene) Beloded",
+  "license": "UNLICENSE",
+  "devDependencies": {
+    "prettier": "2.4.1",
+    "prettier-plugin-svelte": "2.4.0",
+    "typescript": "4.4.4"
+  }
+}

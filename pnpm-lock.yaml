@@ -1,0 +1,36 @@
+lockfileVersion: 5.3
+
+importers:
+
+  .:
+    specifiers:
+      prettier: 2.4.1
+      prettier-plugin-svelte: 2.4.0
+      typescript: 4.4.4
+    devDependencies:
+      prettier: 2.4.1
+      prettier-plugin-svelte: 2.4.0_prettier@2.4.1
+      typescript: 4.4.4
+
+packages:
+
+  /prettier-plugin-svelte/2.4.0_prettier@2.4.1:
+    resolution: {integrity: sha512-JwJ9bOz4XHLQtiLnX4mTSSDUdhu12WH8sTwy/XTDCSyPlah6IcV7NWeYBZscPEcceu2YnW8Y9sJCP40Z2UH9GA==}
+    peerDependencies:
+      prettier: ^1.16.4 || ^2.0.0
+      svelte: ^3.2.0
+    dependencies:
+      prettier: 2.4.1
+    dev: true
+
+  /prettier/2.4.1:
+    resolution: {integrity: sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
+
+  /typescript/4.4.4:
+    resolution: {integrity: sha512-DqGhF5IKoBl8WNf8C1gu8q0xZSInh9j1kJJMqT3a94w1JzVaBU4EXOSMrz9yDqMT0xt3selp83fuFMQ0uzv6qA==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+    dev: true
