@@ -6,6 +6,7 @@
   "scripts": {
     "test": "hardhat test",
     "build": "hardhat compile",
+    "clean": "hardhat clean",
     "deploy": "hardhat run scripts/deploy.ts",
     "dev": "hardhat node"
   },
