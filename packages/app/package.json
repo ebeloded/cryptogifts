@@ -2,6 +2,7 @@
   "name": "@cryptogifts/app",
   "version": "0.0.1",
   "scripts": {
+    "deploy": "firebase deploy --only hosting",
     "dev": "svelte-kit dev",
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
