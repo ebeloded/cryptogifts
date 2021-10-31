@@ -1,21 +1,35 @@
 <script lang="ts">
-import { setGreeting, fetchGreeting } from '@cryptogifts/ethereum'
-let greeting: string | undefined = undefined
-let newGreeting = ''
-async function getGreeting() {
-  greeting = await fetchGreeting()
+import { contract, getBalance } from '@cryptogifts/ethereum'
+console.log(contract())
+
+let balance: any = 0
+
+let depositValue = 0
+
+function deposit() {
+  contract(true).deposit({
+    value: depositValue,
+  })
 }
 </script>
 
-<button>RequestAccount</button>
-<button on:click="{getGreeting}">getGreeting</button>
+Owner:
+{#await contract().owner() then owner}
+  {owner}
+{/await}
+
 <pre>
-{greeting}
+  balance: {balance}
+
 </pre>
-<input bind:value="{newGreeting}" />
+
 <button
   on:click="{() => {
-    setGreeting(newGreeting)
+    getBalance().then((v) => (balance = v))
   }}">
-  SetGreeting
+  GetBalance
 </button>
+
+<input type="number" bind:value="{depositValue}" />
+
+<button on:click="{deposit}">Deposit</button>

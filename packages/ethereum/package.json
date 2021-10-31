@@ -3,13 +3,25 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
+  "watch": {
+    "test+deploy": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "sol",
+      "quiet": false
+    }
+  },
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
     "clean": "hardhat clean",
     "deploy": "hardhat run scripts/deploy.ts",
-    "node": "hardhat node",
-    "dev": "run-p node"
+    "deploy:localhost": "hardhat run scripts/deploy.ts --network localhost",
+    "test+deploy": "run-s test deploy:localhost",
+    "start": "hardhat node",
+    "dev": "run-p start watch",
+    "watch": "npm-watch"
   },
   "keywords": [],
   "author": "",

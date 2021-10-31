@@ -4,40 +4,26 @@ declare global {
   }
 }
 
-import { utils, ethers } from 'ethers'
-import { abi } from './artifacts/src/Greeter.sol/Greeter.json'
-import { Greeter } from './contracts'
+import { ethers } from 'ethers'
+import { Payable__factory } from './contracts'
 
-const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+const PAYABLE_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
 
-export async function requestAccount() {
-  await window.ethereum.request({ method: 'eth_requestAccounts' })
+const provider = () => new ethers.providers.JsonRpcProvider()
+const signer = () => {
+  const wallet = new ethers.Wallet(
+    '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+    provider(),
+  )
+  console.log({ wallet })
+  return wallet
 }
 
-// call the smart contract, read the current greeting value
-export async function fetchGreeting() {
-  if (typeof window.ethereum !== 'undefined') {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      abi,
-      provider,
-    ) as Greeter
-
-    return await contract.greet()
-  }
+export const contract = (sign: boolean = false) => {
+  const s = sign ? signer() : provider()
+  return Payable__factory.connect(PAYABLE_ADDRESS, s)
 }
 
-// call the smart contract, send an update
-export async function setGreeting(greeting: string) {
-  if (typeof window.ethereum !== 'undefined') {
-    await requestAccount()
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner()
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer)
-    const transaction = await contract.setGreeting(greeting)
-    await transaction.wait()
-    fetchGreeting()
-  }
+export const getBalance = async () => {
+  return provider().getBalance(PAYABLE_ADDRESS)
 }

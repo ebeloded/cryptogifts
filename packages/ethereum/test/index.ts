@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { Greeter, Greeter__factory } from '../typechain-types'
+import { Greeter, Greeter__factory } from '../contracts'
 
 describe('Greeter', function () {
   before(() => {})

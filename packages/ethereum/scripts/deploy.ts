@@ -20,6 +20,13 @@ async function main() {
   await greeter.deployed()
 
   console.log('Greeter deployed to:', greeter.address)
+
+  const Payable = await ethers.getContractFactory('Payable')
+  const payable = await Payable.deploy()
+
+  await payable.deployed()
+
+  console.log('Payable deployed to:', payable.address)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
