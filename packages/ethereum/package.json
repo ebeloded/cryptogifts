@@ -5,10 +5,11 @@
   "main": "index.ts",
   "scripts": {
     "test": "hardhat test",
-    "build": "hardhat compile",
+    "compile": "hardhat compile",
     "clean": "hardhat clean",
     "deploy": "hardhat run scripts/deploy.ts",
-    "dev": "hardhat node"
+    "node": "hardhat node",
+    "dev": "run-p node"
   },
   "keywords": [],
   "author": "",

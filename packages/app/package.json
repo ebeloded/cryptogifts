@@ -1,5 +1,5 @@
 {
-  "name": "app-kit",
+  "name": "@cryptogifts/app",
   "version": "0.0.1",
   "scripts": {
     "dev": "svelte-kit dev",
@@ -16,5 +16,8 @@
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@cryptogifts/ethereum": "workspace:1.0.0"
+  }
 }
