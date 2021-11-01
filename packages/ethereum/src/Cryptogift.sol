@@ -12,8 +12,6 @@ enum GiftType {
 contract Cryptogift {
   mapping(string => uint256) public giftMap;
 
-  /// @notice Calculate tree age in years, rounded up, for live trees
-  /// @dev The Alexandr N. Tetearing algorithm could increase precision
   function stashETH(string memory key, uint256 amount) public payable {
     console.log('key', key);
     console.log('amount', amount);
