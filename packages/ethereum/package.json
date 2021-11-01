@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "watch": {
-    "test+deploy": {
+    "deploy:localhost": {
       "patterns": [
         "src"
       ],
@@ -16,8 +16,8 @@
     "test": "hardhat test",
     "compile": "hardhat compile",
     "clean": "hardhat clean",
-    "deploy": "hardhat run scripts/deploy.ts",
-    "deploy:localhost": "hardhat run scripts/deploy.ts --network localhost",
+    "deploy": "hardhat deploy",
+    "deploy:localhost": "hardhat deploy --network localhost",
     "test+deploy": "run-s test deploy:localhost",
     "start": "hardhat node",
     "dev": "run-p start watch",
