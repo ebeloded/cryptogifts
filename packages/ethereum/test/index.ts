@@ -1,25 +1,32 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { Greeter, Greeter__factory } from '../contracts'
+import { utils, BigNumber } from 'ethers'
+const { parseEther, formatEther } = utils
 
-describe('Greeter', function () {
-  before(() => {})
-  it("Should return the new greeting once it's changed", async function () {
-    const GreeterContract = (await ethers.getContractFactory(
-      'Greeter',
-    )) as Greeter__factory
+import {
+  Greeter,
+  Greeter__factory,
+  CryptoGifts,
+  CryptoGifts__factory,
+} from '../contracts'
 
-    const greeter = (await GreeterContract.deploy('Hello, world!')) as Greeter
+// xdescribe('Greeter', function () {
+//   it("Should return the new greeting once it's changed", async function () {
+//     const GreeterContract = (await ethers.getContractFactory(
+//       'Greeter',
+//     )) as Greeter__factory
 
-    await greeter.deployed()
+//     const greeter = (await GreeterContract.deploy('Hello, world!')) as Greeter
 
-    expect(await greeter.greet()).to.equal('Hello, world!')
+//     await greeter.deployed()
 
-    const setGreetingTx = await greeter.setGreeting('Hola, mundo!')
+//     expect(await greeter.greet()).to.equal('Hello, world!')
 
-    // wait until the transaction is mined
-    await setGreetingTx.wait()
+//     const setGreetingTx = await greeter.setGreeting('Hola, mundo!')
 
-    expect(await greeter.greet()).to.equal('Hola, mundo!')
-  })
-})
+//     // wait until the transaction is mined
+//     await setGreetingTx.wait()
+
+//     expect(await greeter.greet()).to.equal('Hola, mundo!')
+//   })
+// })

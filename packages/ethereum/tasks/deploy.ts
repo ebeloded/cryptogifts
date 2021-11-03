@@ -19,10 +19,10 @@ async function updateAdressesJSON(
 }
 
 task('deploy', 'Deploys the contracts', async (taskArgs, hre) => {
-  const { Cryptogift__factory } = await import('../contracts')
+  const { CryptoGifts__factory } = await import('../contracts')
   const [signer] = await hre.ethers.getSigners()
 
-  const Cryptogift = await new Cryptogift__factory(signer).deploy()
+  const Cryptogift = await new CryptoGifts__factory(signer).deploy()
 
   await updateAdressesJSON(hre.network.name, 'Cryptogift', Cryptogift.address)
 })
