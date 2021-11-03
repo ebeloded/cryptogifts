@@ -1,18 +1,26 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { BigNumber } from 'ethers'
+import { BigNumber, Signer } from 'ethers'
 
-import { CryptoGifts } from '../contracts'
+import { CryptoGifts, CryptoGifts__factory } from '../contracts'
 
 describe('Cryptogifts', () => {
+  let contractFactory: CryptoGifts__factory
   let contract: CryptoGifts
-  let owner, addr1, addr2, addrs
+  let owner: Signer
+  let addr1: Signer
+  let addr2: Signer
+  let addrs: Signer[]
+
   before(async () => {
     ;[owner, addr1, addr2, ...addrs] = await ethers.getSigners()
-    const contractFactory = await ethers.getContractFactory('CryptoGifts')
-    // const contractFactory = new CryptoGifts__factory()
+    contractFactory = (await ethers.getContractFactory(
+      'CryptoGifts',
+    )) as CryptoGifts__factory
+  })
 
-    contract = (await contractFactory.deploy()) as CryptoGifts
+  beforeEach(async () => {
+    contract = (await contractFactory.deploy()).connect(addr1)
   })
 
   describe('getRequiredGas', async () => {
@@ -48,8 +56,8 @@ describe('Cryptogifts', () => {
     })
 
     it('putETH fails when not enough value for extra gas', async () => {
-      const value = 6
-      const amount = 5
+      const amount = 1
+      const value = 2
       const requiredGas = (await contract.getRequiredGas()).toNumber()
 
       await expect(
@@ -59,7 +67,7 @@ describe('Cryptogifts', () => {
       )
     })
 
-    it.skip('putETH saves gift', async () => {
+    it.only('putETH saves gift', async () => {
       const amount = 1
       const requiredGas = (await contract.getRequiredGas()).toNumber()
       const value = amount + requiredGas

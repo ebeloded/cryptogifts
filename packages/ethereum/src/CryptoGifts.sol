@@ -32,12 +32,13 @@ interface ICryptoGifts {
 //   function addGas(string calldata _kay) external payable;
 // }
 
-contract CryptoGifts {
-  error ValueMustBeGreaterThanZero();
-  error AmountMustBeGreaterThanZero();
-  error ValueMustBeGreaterThanAmount();
-  error NotEnoughEthForExtraGas(uint256 provided, uint256 required);
+error ValueMustBeGreaterThanZero();
+error AmountMustBeGreaterThanZero();
+error ValueMustBeGreaterThanAmount();
 
+error NotEnoughEthForExtraGas(uint256 provided, uint256 required);
+
+contract CryptoGifts {
   int256 public num;
   /// maps hash(hash(key)) to gift
   mapping(string => Gift) private gifts;
@@ -45,16 +46,6 @@ contract CryptoGifts {
   function getRequiredGas() public pure returns (uint256) {
     // TODO: calculate required gas
     return 100 wei;
-  }
-
-  function getWei() external view returns (uint256) {
-    console.log('wei', 1 wei);
-    return 1 wei;
-  }
-
-  function getEth() external view returns (uint256) {
-    console.log('ether', 1 ether);
-    return 1 ether;
   }
 
   function putETH(string calldata _key, uint256 _amount) external payable {
