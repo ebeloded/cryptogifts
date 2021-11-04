@@ -4,6 +4,7 @@ importers:
 
   .:
     specifiers:
+      chokidar-cli: 3.0.0
       npm-run-all: 4.1.5
       npm-watch: 0.11.0
       prettier: 2.4.1
@@ -11,6 +12,7 @@ importers:
       prettier-plugin-svelte: 2.4.0
       typescript: 4.4.4
     devDependencies:
+      chokidar-cli: 3.0.0
       npm-run-all: 4.1.5
       npm-watch: 0.11.0
       prettier: 2.4.1
@@ -53,6 +55,7 @@ importers:
       '@nomiclabs/hardhat-ethers': 2.0.2
       '@nomiclabs/hardhat-etherscan': 2.1.7
       '@nomiclabs/hardhat-waffle': 2.0.1
+      '@openzeppelin/contracts': 4.3.2
       '@typechain/ethers-v5': 8.0.0
       '@typechain/hardhat': 3.0.0
       '@types/chai': 4.2.22
@@ -66,6 +69,7 @@ importers:
       hardhat: 2.6.7
       hardhat-deploy: 0.9.4
       hardhat-gas-reporter: 1.0.4
+      nanoid: 3.1.30
       solhint: 3.3.6
       solidity-coverage: 0.7.17
       ts-node: 10.4.0
@@ -75,7 +79,9 @@ importers:
       '@ethersproject/abi': 5.5.0
       '@ethersproject/bytes': 5.5.0
       '@ethersproject/providers': 5.5.0
+      '@openzeppelin/contracts': 4.3.2
       ethers: 5.5.1
+      nanoid: 3.1.30
     devDependencies:
       '@nomiclabs/hardhat-ethers': 2.0.2_ethers@5.5.1+hardhat@2.6.7
       '@nomiclabs/hardhat-etherscan': 2.1.7_hardhat@2.6.7
@@ -877,6 +883,10 @@ packages:
       ethers: 5.5.1
       hardhat: 2.6.7
     dev: true
+
+  /@openzeppelin/contracts/4.3.2:
+    resolution: {integrity: sha512-AybF1cesONZStg5kWf6ao9OlqTZuPqddvprc0ky7lrUVOjXeKpmQ2Y9FK+6ygxasb+4aic4O5pneFBfwVsRRRg==}
+    dev: false
 
   /@panva/asn1.js/1.0.0:
     resolution: {integrity: sha512-UdkG3mLEqXgnlKsWanWcgb6dOjUzJ+XC5f+aWw30qrtjxeNUSfKX1cd5FBzOaXQumoe9nIqeZUvrRJS03HCCtw==}
@@ -2820,6 +2830,17 @@ packages:
     resolution: {integrity: sha1-BOTLUWuRQziTWB5tRgGnjpVS6gY=}
     dependencies:
       functional-red-black-tree: 1.0.1
+    dev: true
+
+  /chokidar-cli/3.0.0:
+    resolution: {integrity: sha512-xVW+Qeh7z15uZRxHOkP93Ux8A0xbPzwK4GaqD8dQOYc34TlkqUhVSS59fK36DOp5WdJlrRzlYSy02Ht99FjZqQ==}
+    engines: {node: '>= 8.10.0'}
+    hasBin: true
+    dependencies:
+      chokidar: 3.5.2
+      lodash.debounce: 4.0.8
+      lodash.throttle: 4.1.1
+      yargs: 13.3.2
     dev: true
 
   /chokidar/3.3.0:
@@ -6935,6 +6956,10 @@ packages:
     resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
     dev: false
 
+  /lodash.debounce/4.0.8:
+    resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
+    dev: true
+
   /lodash.includes/4.3.0:
     resolution: {integrity: sha1-YLuYqHy5I8aMoeUTJUgzFISfVT8=}
     dev: false
@@ -6962,6 +6987,10 @@ packages:
   /lodash.once/4.1.1:
     resolution: {integrity: sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=}
     dev: false
+
+  /lodash.throttle/4.1.1:
+    resolution: {integrity: sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=}
+    dev: true
 
   /lodash.topath/4.5.2:
     resolution: {integrity: sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=}
@@ -7461,7 +7490,6 @@ packages:
     resolution: {integrity: sha512-zJpuPDwOv8D2zq2WRoMe1HsfZthVewpel9CAvTfc/2mBD1uUT/agc5f7GHGWXlYkFvi1mVxe4IjvP2HNrop7nQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
-    dev: true
 
   /nanomatch/1.2.13:
     resolution: {integrity: sha512-fpoe2T0RbHwBTBUOftAfBPaDEi06ufaUai0mE6Yn1kacc3SnTErfb/h+X94VXzI64rKFHYImXSvdwGGCmwOqCA==}

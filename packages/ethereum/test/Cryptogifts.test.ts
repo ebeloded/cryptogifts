@@ -1,8 +1,9 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { BigNumber, Signer } from 'ethers'
-
+import { BigNumber, Signer, utils } from 'ethers'
+import { nanoid } from 'nanoid'
 import { CryptoGifts, CryptoGifts__factory } from '../contracts'
+import { title } from 'process'
 
 describe('Cryptogifts', () => {
   let contractFactory: CryptoGifts__factory
@@ -14,13 +15,14 @@ describe('Cryptogifts', () => {
 
   before(async () => {
     ;[owner, addr1, addr2, ...addrs] = await ethers.getSigners()
+
     contractFactory = (await ethers.getContractFactory(
       'CryptoGifts',
     )) as CryptoGifts__factory
   })
 
   beforeEach(async () => {
-    contract = (await contractFactory.deploy()).connect(addr1)
+    contract = (await contractFactory.deploy()).connect(owner)
   })
 
   describe('getRequiredGas', async () => {
@@ -34,14 +36,14 @@ describe('Cryptogifts', () => {
 
   describe('putETH', async () => {
     it('putETH fails without value', async () => {
-      await expect(contract.putETH('random-key', 1)).to.be.revertedWith(
+      await expect(contract.putETH(nanoid(), 1)).to.be.revertedWith(
         'ValueMustBeGreaterThanZero()',
       )
     })
 
     it('putETH fails without amount', async () => {
       await expect(
-        contract.putETH('random-key', 0, {
+        contract.putETH(nanoid(), 0, {
           value: 1,
         }),
       ).to.be.revertedWith('AmountMustBeGreaterThanZero()')
@@ -49,7 +51,7 @@ describe('Cryptogifts', () => {
 
     it('putETH fails when value is not larger than amount', async () => {
       await expect(
-        contract.putETH('random-key', 1, {
+        contract.putETH(nanoid(), 1, {
           value: 1,
         }),
       ).to.be.revertedWith('ValueMustBeGreaterThanAmount()')
@@ -58,25 +60,101 @@ describe('Cryptogifts', () => {
     it('putETH fails when not enough value for extra gas', async () => {
       const amount = 1
       const value = 2
-      const requiredGas = (await contract.getRequiredGas()).toNumber()
+      const requiredGas = await contract.getRequiredGas()
 
       await expect(
-        contract.putETH('random-key', amount, { value }),
+        contract.putETH(nanoid(), amount, { value }),
       ).to.be.revertedWith(
         `NotEnoughEthForExtraGas(${value - amount}, ${requiredGas})`,
       )
     })
 
-    it.only('putETH saves gift', async () => {
-      const amount = 1
-      const requiredGas = (await contract.getRequiredGas()).toNumber()
-      const value = amount + requiredGas
+    it('hashString', async () => {
+      const input = nanoid()
+      const hashed = utils.id(input)
+      const contractHashed = await contract.hashString(input)
 
-      await expect(
-        contract.putETH('random-key', amount, {
+      expect(contractHashed).to.eq(hashed)
+    })
+
+    it('hashStringToString', async () => {
+      const input = 'test'
+      const hashed = utils.id(input)
+      const contractHashed = await contract.hashStringToString(input)
+
+      expect(contractHashed).to.eq(hashed)
+    })
+
+    it('hashBytes', async () => {
+      const input = nanoid()
+
+      const bytes = utils.formatBytes32String(input.substr(0, 31))
+
+      const hashed = utils.keccak256(bytes)
+
+      const contractHashed = await contract.hashBytes(bytes)
+
+      expect(contractHashed).to.equal(hashed)
+    })
+
+    it('hashHash', async () => {
+      const input = nanoid()
+      const hashedHashed = utils.keccak256(
+        utils.keccak256(utils.toUtf8Bytes(input)),
+      )
+
+      const contractHashed = await contract.hashHash(input)
+
+      expect(contractHashed).to.equal(hashedHashed)
+    })
+
+    it.only('hashHashAlt', async () => {
+      const input = utils.id('hello')
+      const hashedHashed = utils.keccak256(
+        utils.keccak256(utils.toUtf8Bytes(input)),
+      )
+
+      const contractHashed = await contract.hashHashAlt(input)
+
+      expect(contractHashed).to.equal(hashedHashed)
+    })
+
+    it('bytes32ToString', async () => {
+      const input = nanoid().slice(0, 31)
+
+      const bytes32 = utils.formatBytes32String(input)
+
+      const contractString = await contract.bytes32ToString(bytes32)
+
+      expect(contractString).to.equal(input)
+    })
+
+    it('putETH saves gift', async () => {
+      const addr1Contract = contract.connect(addr1)
+      const key = nanoid()
+      const requiredGas = await addr1Contract.getRequiredGas()
+      const amount = utils.parseEther('1')
+      const value = amount.add(requiredGas)
+
+      await expect(() =>
+        addr1Contract.putETH(key, amount, {
           value,
         }),
-      ).to.be.revertedWith('ValueMustBeGreaterThanAmount()')
+      ).changeEtherBalances(
+        [addr1, owner, contract],
+        [BigNumber.from(0).sub(value), requiredGas, amount],
+      )
+    })
+
+    it.skip('provideTranswerETH', async () => {
+      const addr1Contract = contract.connect(addr1)
+      const key = nanoid()
+      const requiredGas = await addr1Contract.getRequiredGas()
+      const amount = utils.parseEther('1')
+      const value = amount.add(requiredGas)
+      await addr1Contract.putETH(key, amount, {
+        value,
+      })
     })
   })
 })
