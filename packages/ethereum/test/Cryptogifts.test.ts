@@ -3,18 +3,15 @@ import { ethers } from 'hardhat'
 import { BigNumber, Signer, utils } from 'ethers'
 import { nanoid } from 'nanoid'
 import { CryptoGifts, CryptoGifts__factory } from '../contracts'
-import { title } from 'process'
 
 describe('Cryptogifts', () => {
   let contractFactory: CryptoGifts__factory
   let contract: CryptoGifts
   let owner: Signer
-  let addr1: Signer
-  let addr2: Signer
-  let addrs: Signer[]
+  let giverAddr1: Signer
 
   before(async () => {
-    ;[owner, addr1, addr2, ...addrs] = await ethers.getSigners()
+    ;[owner, giverAddr1] = await ethers.getSigners()
 
     contractFactory = (await ethers.getContractFactory(
       'CryptoGifts',
@@ -34,41 +31,7 @@ describe('Cryptogifts', () => {
     })
   })
 
-  describe('putETH', async () => {
-    it('putETH fails without value', async () => {
-      await expect(contract.putETH(nanoid(), 1)).to.be.revertedWith(
-        'ValueMustBeGreaterThanZero()',
-      )
-    })
-
-    it('putETH fails without amount', async () => {
-      await expect(
-        contract.putETH(nanoid(), 0, {
-          value: 1,
-        }),
-      ).to.be.revertedWith('AmountMustBeGreaterThanZero()')
-    })
-
-    it('putETH fails when value is not larger than amount', async () => {
-      await expect(
-        contract.putETH(nanoid(), 1, {
-          value: 1,
-        }),
-      ).to.be.revertedWith('ValueMustBeGreaterThanAmount()')
-    })
-
-    it('putETH fails when not enough value for extra gas', async () => {
-      const amount = 1
-      const value = 2
-      const requiredGas = await contract.getRequiredGas()
-
-      await expect(
-        contract.putETH(nanoid(), amount, { value }),
-      ).to.be.revertedWith(
-        `NotEnoughEthForExtraGas(${value - amount}, ${requiredGas})`,
-      )
-    })
-
+  describe('hashing', async () => {
     it('hashString', async () => {
       const input = nanoid()
       const hashed = utils.id(input)
@@ -108,7 +71,7 @@ describe('Cryptogifts', () => {
       expect(contractHashed).to.equal(hashedHashed)
     })
 
-    it.only('hashHashAlt', async () => {
+    it('hashHashAlt', async () => {
       const input = utils.id('hello')
       const hashedHashed = utils.keccak256(
         utils.keccak256(utils.toUtf8Bytes(input)),
@@ -128,9 +91,45 @@ describe('Cryptogifts', () => {
 
       expect(contractString).to.equal(input)
     })
+  })
+
+  describe('putETH', async () => {
+    it('putETH fails without value', async () => {
+      await expect(contract.putETH(nanoid(), 1)).to.be.revertedWith(
+        'ValueMustBeGreaterThanZero()',
+      )
+    })
+
+    it('putETH fails without amount', async () => {
+      await expect(
+        contract.putETH(nanoid(), 0, {
+          value: 1,
+        }),
+      ).to.be.revertedWith('AmountMustBeGreaterThanZero()')
+    })
+
+    it('putETH fails when value is not larger than amount', async () => {
+      await expect(
+        contract.putETH(nanoid(), 1, {
+          value: 1,
+        }),
+      ).to.be.revertedWith('ValueMustBeGreaterThanAmount()')
+    })
+
+    it('putETH fails when not enough value for extra gas', async () => {
+      const amount = 1
+      const value = 2
+      const requiredGas = await contract.getRequiredGas()
+
+      await expect(
+        contract.putETH(nanoid(), amount, { value }),
+      ).to.be.revertedWith(
+        `NotEnoughEthForExtraGas(${value - amount}, ${requiredGas})`,
+      )
+    })
 
     it('putETH saves gift', async () => {
-      const addr1Contract = contract.connect(addr1)
+      const addr1Contract = contract.connect(giverAddr1)
       const key = nanoid()
       const requiredGas = await addr1Contract.getRequiredGas()
       const amount = utils.parseEther('1')
@@ -141,13 +140,13 @@ describe('Cryptogifts', () => {
           value,
         }),
       ).changeEtherBalances(
-        [addr1, owner, contract],
+        [giverAddr1, owner, contract],
         [BigNumber.from(0).sub(value), requiredGas, amount],
       )
     })
 
     it.skip('provideTranswerETH', async () => {
-      const addr1Contract = contract.connect(addr1)
+      const addr1Contract = contract.connect(giverAddr1)
       const key = nanoid()
       const requiredGas = await addr1Contract.getRequiredGas()
       const amount = utils.parseEther('1')
