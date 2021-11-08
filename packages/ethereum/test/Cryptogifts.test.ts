@@ -4,22 +4,30 @@ import { BigNumber, Signer, utils } from 'ethers'
 import { nanoid } from 'nanoid'
 import { CryptoGifts, CryptoGifts__factory } from '../contracts'
 
+const hash = (v: string) => utils.keccak256(utils.toUtf8Bytes(v))
+const hashHash = (v: string) => utils.keccak256(hash(v))
+enum GiftType {
+  ETH = 0,
+  ERC20 = 1,
+  ERC721 = 2,
+}
 describe('Cryptogifts', () => {
   let contractFactory: CryptoGifts__factory
   let contract: CryptoGifts
-  let owner: Signer
-  let giverAddr1: Signer
+  let contract_giver: CryptoGifts
+  let contract_owner: CryptoGifts
+  let ownerAddr: Signer
+  let giverAddr: Signer
+  let receiverAddr: Signer
 
   before(async () => {
-    ;[owner, giverAddr1] = await ethers.getSigners()
+    ;[ownerAddr, giverAddr, receiverAddr] = await ethers.getSigners()
 
     contractFactory = (await ethers.getContractFactory(
       'CryptoGifts',
     )) as CryptoGifts__factory
-  })
 
-  beforeEach(async () => {
-    contract = (await contractFactory.deploy()).connect(owner)
+    contract = await contractFactory.deploy()
   })
 
   describe('getRequiredGas', async () => {
@@ -33,25 +41,19 @@ describe('Cryptogifts', () => {
 
   describe('hashing', async () => {
     it('hashString', async () => {
-      const input = nanoid()
-      const hashed = utils.id(input)
+      const input = nanoid(100)
+
+      const hashed = hash(input)
+      // const hashed = utils.solidityKeccak256(['string'], [input])
       const contractHashed = await contract.hashString(input)
 
       expect(contractHashed).to.eq(hashed)
     })
 
-    it('hashStringToString', async () => {
-      const input = 'test'
-      const hashed = utils.id(input)
-      const contractHashed = await contract.hashStringToString(input)
-
-      expect(contractHashed).to.eq(hashed)
-    })
-
     it('hashBytes', async () => {
-      const input = nanoid()
+      const input = nanoid(100)
 
-      const bytes = utils.formatBytes32String(input.substr(0, 31))
+      const bytes = utils.toUtf8Bytes(input)
 
       const hashed = utils.keccak256(bytes)
 
@@ -71,46 +73,69 @@ describe('Cryptogifts', () => {
       expect(contractHashed).to.equal(hashedHashed)
     })
 
-    it('hashHashAlt', async () => {
-      const input = utils.id('hello')
-      const hashedHashed = utils.keccak256(
-        utils.keccak256(utils.toUtf8Bytes(input)),
-      )
+    it('hashHashedBytes', async () => {
+      const input = nanoid(100)
 
-      const contractHashed = await contract.hashHashAlt(input)
+      const hashed = utils.id(input)
 
-      expect(contractHashed).to.equal(hashedHashed)
+      const hashedHashed = utils.keccak256(hashed)
+
+      const contractHashedHashed = await contract.hashHash(input)
+
+      expect(contractHashedHashed).to.equal(hashedHashed)
+
+      const contractBytesHashed = await contract.hashBytes(hashed)
+
+      expect(contractBytesHashed).to.equal(hashedHashed)
     })
 
-    it('bytes32ToString', async () => {
-      const input = nanoid().slice(0, 31)
+    // it.skip('hashStringToString', async () => {
+    //   const input = 'test'
+    //   const hashed = utils.id(input)
+    //   const contractHashed = await contract.hashStringToString(input)
 
-      const bytes32 = utils.formatBytes32String(input)
+    //   expect(contractHashed).to.eq(hashed)
+    // })
 
-      const contractString = await contract.bytes32ToString(bytes32)
+    // it('hashHashAlt', async () => {
+    //   const input = utils.id('hello')
+    //   const hashedHashed = utils.keccak256(
+    //     utils.keccak256(utils.toUtf8Bytes(input)),
+    //   )
 
-      expect(contractString).to.equal(input)
-    })
+    //   const contractHashed = await contract.hashHashAlt(input)
+
+    //   expect(contractHashed).to.equal(hashedHashed)
+    // })
   })
 
-  describe('putETH', async () => {
+  describe.only('putETH', async () => {
+    beforeEach(async () => {
+      contract_owner = contract.connect(ownerAddr)
+      contract_giver = contract.connect(giverAddr)
+    })
+
     it('putETH fails without value', async () => {
-      await expect(contract.putETH(nanoid(), 1)).to.be.revertedWith(
+      const hashHashKey = hashHash(nanoid())
+      await expect(contract_giver.putETH(hashHashKey, 1)).to.be.revertedWith(
         'ValueMustBeGreaterThanZero()',
       )
     })
 
     it('putETH fails without amount', async () => {
+      const hashHashKey = hashHash(nanoid())
       await expect(
-        contract.putETH(nanoid(), 0, {
+        contract_giver.putETH(hashHashKey, 0, {
           value: 1,
         }),
       ).to.be.revertedWith('AmountMustBeGreaterThanZero()')
     })
 
     it('putETH fails when value is not larger than amount', async () => {
+      const hashHashKey = hashHash(nanoid())
+
       await expect(
-        contract.putETH(nanoid(), 1, {
+        contract_giver.putETH(hashHashKey, 1, {
           value: 1,
         }),
       ).to.be.revertedWith('ValueMustBeGreaterThanAmount()')
@@ -119,41 +144,89 @@ describe('Cryptogifts', () => {
     it('putETH fails when not enough value for extra gas', async () => {
       const amount = 1
       const value = 2
-      const requiredGas = await contract.getRequiredGas()
+      const requiredGas = await contract_giver.getRequiredGas()
+      const hashHashKey = hashHash(nanoid())
 
       await expect(
-        contract.putETH(nanoid(), amount, { value }),
+        contract_giver.putETH(hashHashKey, amount, { value }),
       ).to.be.revertedWith(
         `NotEnoughEthForExtraGas(${value - amount}, ${requiredGas})`,
       )
     })
 
-    it('putETH saves gift', async () => {
-      const addr1Contract = contract.connect(giverAddr1)
+    it.only('putETH saves gift', async () => {
       const key = nanoid()
-      const requiredGas = await addr1Contract.getRequiredGas()
+      const hashHashKey = hashHash(key)
+      const requiredGas = await contract_giver.getRequiredGas()
       const amount = utils.parseEther('1')
       const value = amount.add(requiredGas)
 
       await expect(() =>
-        addr1Contract.putETH(key, amount, {
+        contract_giver.putETH(hashHashKey, amount, {
           value,
         }),
       ).changeEtherBalances(
-        [giverAddr1, owner, contract],
+        [giverAddr, ownerAddr, contract_giver],
         [BigNumber.from(0).sub(value), requiredGas, amount],
       )
+
+      await expect(contract_giver.has(hashHashKey)).to.be.reverted
+
+      expect(await contract_owner.has(hashHashKey)).to.be.true
+
+      const gift = await contract_owner.get(hashHashKey)
+
+      expect(gift.from).to.eq(await contract_giver.signer.getAddress())
+      expect(gift.amount).to.eq(amount)
+      expect(gift.giftType).to.eq(GiftType.ETH)
+    })
+
+    it.only('redeemGift', async () => {
+      const key = nanoid()
+      const hashKey = hash(key)
+      const hashHashKey = hashHash(key)
+      const requiredGas = await contract_giver.getRequiredGas()
+      const amount = utils.parseEther('1')
+      const value = amount.add(requiredGas)
+      await contract_giver.putETH(hashHashKey, amount, {
+        value,
+      })
+
+      const contract_receiver = contract.connect(receiverAddr)
+
+      await expect(
+        contract_receiver.redeemGift('wrong key'),
+      ).to.be.revertedWith(`WrongKey`)
+
+      expect(await contract_owner.has(hashHashKey)).to.be.true
+
+      await expect(() => contract_receiver.redeemGift(key)).changeEtherBalances(
+        [receiverAddr, contract],
+        [amount, BigNumber.from(0).sub(amount)],
+      )
+
+      expect(await contract_owner.has(hashHashKey)).to.be.false
     })
 
     it.skip('provideTranswerETH', async () => {
-      const addr1Contract = contract.connect(giverAddr1)
       const key = nanoid()
-      const requiredGas = await addr1Contract.getRequiredGas()
+      const hashKey = hash(key)
+      const hashHashKey = hashHash(key)
+      const requiredGas = await contract_giver.getRequiredGas()
       const amount = utils.parseEther('1')
       const value = amount.add(requiredGas)
-      await addr1Contract.putETH(key, amount, {
+      await contract_giver.putETH(hashHashKey, amount, {
         value,
       })
+
+      const receiver = ethers.Wallet.createRandom()
+
+      const receiverAddress = await receiver.getAddress()
+
+      console.log({ receiverAddress, hashKey })
+
+      await expect(contract_giver.provideTransferETH(receiverAddress, hashKey))
+        .to.be.reverted
     })
   })
 })
