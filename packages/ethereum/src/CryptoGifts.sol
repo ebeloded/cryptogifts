@@ -10,17 +10,25 @@ enum GiftType {
   ERC721
 }
 
+enum GiftStatus {
+  NONE,
+  PENDING,
+  REDEEMED,
+  REVOKED
+}
+
 struct Gift {
-  address from;
-  bool notify;
+  address sender;
+  address redeemer;
+  GiftStatus status;
   GiftType giftType;
-  uint256 amount;
-  uint256 gasLimit;
-  bool exists;
+  uint256 giftValue;
+  uint256 giftGas;
+  // bool notifySender;
 }
 
 interface ICryptoGifts {
-  function putETH(string calldata _key, uint256 _amount) external payable;
+  function putETH(string calldata _key, uint256 _giftValue) external payable;
 
   function get(string calldata _key) external returns (Gift memory gift);
 
@@ -36,7 +44,12 @@ interface ICryptoGifts {
 contract CryptoGifts is Ownable {
   int256 public num;
   /// maps hash(hash(key)) to gift
-  mapping(bytes => Gift) private giftsByHash;
+  mapping(bytes => Gift) private gifts;
+  mapping(address => bytes[]) private giftsBySender;
+
+  function getMyGifts() external view returns (bytes[] memory keys) {
+    keys = giftsBySender[msg.sender];
+  }
 
   function getRequiredGas() public pure returns (uint256) {
     // TODO: calculate required gas
@@ -46,45 +59,50 @@ contract CryptoGifts is Ownable {
   error ValueMustBeGreaterThanZero();
   error AmountMustBeGreaterThanZero();
   error ValueMustBeGreaterThanAmount();
-  error NotEnoughEthForExtraGas(uint256 provided, uint256 required);
+  error NotEnoughGiftGas(uint256 provided, uint256 required);
 
-  function putETH(bytes calldata _hashHashKey, uint256 _amount)
+  function putETH(bytes calldata _hashHashKey, uint256 _giftValue)
     external
     payable
   {
     if (msg.value == 0) {
       revert ValueMustBeGreaterThanZero();
     }
-    if (_amount == 0) {
+    if (_giftValue == 0) {
       revert AmountMustBeGreaterThanZero();
     }
-    if (msg.value <= _amount) {
+    if (msg.value <= _giftValue) {
       revert ValueMustBeGreaterThanAmount();
     }
 
     uint256 requiredGas = getRequiredGas();
 
-    if (msg.value - _amount < requiredGas) {
-      revert NotEnoughEthForExtraGas(msg.value - _amount, requiredGas);
+    if (msg.value < _giftValue + requiredGas) {
+      revert NotEnoughGiftGas(msg.value - _giftValue, requiredGas);
     }
 
+    // Split the extra value in two
+    uint256 giftGas = (msg.value - _giftValue) / 2;
+
+    // One half goes to EOA providing gas to the redeemer
+    payable(owner()).transfer(giftGas);
+
+    // The other half stays in the contract
     Gift memory gift = Gift({
-      from: msg.sender,
-      notify: false,
+      sender: msg.sender,
+      redeemer: address(0),
       giftType: GiftType.ETH,
-      amount: _amount,
-      gasLimit: msg.value - _amount,
-      exists: true
+      giftValue: _giftValue,
+      giftGas: giftGas,
+      status: GiftStatus.PENDING
     });
 
-    giftsByHash[_hashHashKey] = gift;
+    gifts[_hashHashKey] = gift;
+    giftsBySender[msg.sender].push(_hashHashKey);
+
     // emit GiftAdded(gift);
 
-    payable(owner()).transfer(msg.value - _amount);
-
     // emit OwnerPaid
-
-    console.log('gift created');
   }
 
   function has(bytes calldata _hashHashKey)
@@ -93,7 +111,7 @@ contract CryptoGifts is Ownable {
     onlyOwner
     returns (bool exists)
   {
-    return giftsByHash[_hashHashKey].exists;
+    return gifts[_hashHashKey].status != GiftStatus.NONE;
   }
 
   function get(bytes calldata _hashHashKey)
@@ -102,7 +120,7 @@ contract CryptoGifts is Ownable {
     onlyOwner
     returns (Gift memory gift)
   {
-    return giftsByHash[_hashHashKey];
+    return gifts[_hashHashKey];
   }
 
   function hashString(string memory _key) public pure returns (bytes32) {
@@ -117,26 +135,59 @@ contract CryptoGifts is Ownable {
     return keccak256(abi.encodePacked(((hashString(_key)))));
   }
 
+  error WrongKey();
+  error GiftAlreadyRedeemed();
+  error GiftAlreadyRevoked();
+
+  function isGiftPending(GiftStatus _status) internal pure returns (bool) {
+    if (_status == GiftStatus.NONE) {
+      revert WrongKey();
+    }
+
+    if (_status == GiftStatus.REDEEMED) {
+      revert GiftAlreadyRedeemed();
+    }
+
+    if (_status == GiftStatus.REVOKED) {
+      revert GiftAlreadyRevoked();
+    }
+
+    if (_status == GiftStatus.PENDING) {
+      return true;
+    }
+
+    return false;
+  }
+
+  error NoGiftGas();
+
   function provideTransferETH(
     address payable _receiver,
     bytes calldata _hashKey
   ) external onlyOwner {
-    console.log('ProvideTransferETH', _receiver);
-  }
+    bytes memory hashHashKey = abi.encodePacked(hashBytes(_hashKey));
 
-  error WrongKey();
+    Gift storage gift = gifts[hashHashKey];
+
+    if (isGiftPending(gift.status)) {
+      if (gift.giftGas == 0) {
+        revert NoGiftGas();
+      }
+      _receiver.transfer(gift.giftGas);
+
+      gift.giftGas = 0;
+    }
+  }
 
   function redeemGift(string calldata _key) external {
     bytes memory hashHashKey = abi.encodePacked(hashHash(_key));
 
-    Gift memory gift = giftsByHash[hashHashKey];
+    Gift storage gift = gifts[hashHashKey];
 
-    if (giftsByHash[hashHashKey].exists == false) {
-      revert WrongKey();
+    if (isGiftPending(gift.status)) {
+      gift.status = GiftStatus.REDEEMED;
+      gift.redeemer = msg.sender;
+      payable(msg.sender).transfer(gift.giftValue);
     }
-
-    payable(msg.sender).transfer(gift.amount);
-
-    delete giftsByHash[hashHashKey];
   }
 }
