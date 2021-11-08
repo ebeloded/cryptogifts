@@ -15,11 +15,12 @@
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
+    "compile:watch": "chokidar \"src/*\" -c \"npm run compile\"",
     "clean": "hardhat clean",
     "deploy": "hardhat deploy",
     "deploy:localhost": "hardhat deploy --network localhost",
     "test+deploy": "run-s test deploy:localhost",
-    "test:watch": "chokidar \"test/*.ts\" \"src/*\" -c \"npm run test\"",
+    "test:watch": "chokidar \"test/*.ts\" \"src/*\" -c \"hardhat test\"",
     "start": "hardhat node",
     "dev": "run-p start watch",
     "watch": "npm-watch"
