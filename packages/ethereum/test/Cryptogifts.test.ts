@@ -88,25 +88,6 @@ describe('Cryptogifts', () => {
 
       expect(contractBytesHashed).to.equal(hashedHashed)
     })
-
-    // it.skip('hashStringToString', async () => {
-    //   const input = 'test'
-    //   const hashed = utils.id(input)
-    //   const contractHashed = await contract.hashStringToString(input)
-
-    //   expect(contractHashed).to.eq(hashed)
-    // })
-
-    // it('hashHashAlt', async () => {
-    //   const input = utils.id('hello')
-    //   const hashedHashed = utils.keccak256(
-    //     utils.keccak256(utils.toUtf8Bytes(input)),
-    //   )
-
-    //   const contractHashed = await contract.hashHashAlt(input)
-
-    //   expect(contractHashed).to.equal(hashedHashed)
-    // })
   })
 
   describe.only('putETH', async () => {
