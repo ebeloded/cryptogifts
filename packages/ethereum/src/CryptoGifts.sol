@@ -33,12 +33,6 @@ interface ICryptoGifts {
 //   function addGas(string calldata _kay) external payable;
 // }
 
-error ValueMustBeGreaterThanZero();
-error AmountMustBeGreaterThanZero();
-error ValueMustBeGreaterThanAmount();
-error NotEnoughEthForExtraGas(uint256 provided, uint256 required);
-error WrongKey();
-
 contract CryptoGifts is Ownable {
   int256 public num;
   /// maps hash(hash(key)) to gift
@@ -48,6 +42,11 @@ contract CryptoGifts is Ownable {
     // TODO: calculate required gas
     return .5 ether;
   }
+
+  error ValueMustBeGreaterThanZero();
+  error AmountMustBeGreaterThanZero();
+  error ValueMustBeGreaterThanAmount();
+  error NotEnoughEthForExtraGas(uint256 provided, uint256 required);
 
   function putETH(bytes calldata _hashHashKey, uint256 _amount)
     external
@@ -125,8 +124,11 @@ contract CryptoGifts is Ownable {
     console.log('ProvideTransferETH', _receiver);
   }
 
+  error WrongKey();
+
   function redeemGift(string calldata _key) external {
     bytes memory hashHashKey = abi.encodePacked(hashHash(_key));
+
     Gift memory gift = giftsByHash[hashHashKey];
 
     if (giftsByHash[hashHashKey].exists == false) {
