@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { BigNumber, Signer, utils } from 'ethers'
+import { BigNumber, providers, Signer, utils } from 'ethers'
 import { nanoid } from 'nanoid'
 import { CryptoGifts, CryptoGifts__factory } from '../contracts'
 
@@ -19,7 +19,7 @@ enum GiftStatus {
   REVOKED = 3,
 }
 
-describe('Cryptogifts', () => {
+describe('Cryptogifts', async () => {
   let contractFactory: CryptoGifts__factory
   let contract: CryptoGifts
   let contract_giver: CryptoGifts
@@ -89,169 +89,167 @@ describe('Cryptogifts', () => {
     })
   })
 
-  describe('getRequiredGas', async () => {
-    const MINIMUM_GAS = BigNumber.from(1) // wei
-
-    it('getRequiredGas retuns value greater than zero', async () => {
-      const requiredGas = await contract.getRequiredGas()
-      expect(requiredGas).to.be.gt(MINIMUM_GAS)
-    })
+  beforeEach(async () => {
+    contract_owner = contract.connect(ownerAddr)
+    contract_giver = contract.connect(giverAddr)
   })
 
-  describe('putETH', async () => {
-    beforeEach(async () => {
-      contract_owner = contract.connect(ownerAddr)
-      contract_giver = contract.connect(giverAddr)
-    })
+  it('getRequiredGas retuns value greater than zero', async () => {
+    const MINIMUM_GAS = BigNumber.from(1) // wei
+    const requiredGas = await contract.getRequiredGas()
+    expect(requiredGas).to.be.gt(MINIMUM_GAS)
+  })
 
-    it('getMyGifts', async () => {
-      expect(await contract.getMyGifts()).to.be.empty
-    })
+  it('getMyGifts', async () => {
+    expect(await contract.getMyGifts()).to.be.empty
+  })
 
-    it('putETH fails without value', async () => {
-      const hashHashKey = hashHash(nanoid())
-      await expect(contract_giver.putETH(hashHashKey, 1)).to.be.revertedWith(
-        'ValueMustBeGreaterThanZero()',
-      )
-    })
+  it('putETH fails without value', async () => {
+    const hashHashKey = hashHash(nanoid())
+    await expect(contract_giver.putETH(hashHashKey, 1)).to.be.revertedWith(
+      'ValueMustBeGreaterThanZero()',
+    )
+  })
 
-    it('putETH fails without giftValue', async () => {
-      const hashHashKey = hashHash(nanoid())
-      await expect(
-        contract_giver.putETH(hashHashKey, 0, {
-          value: 1,
-        }),
-      ).to.be.revertedWith('AmountMustBeGreaterThanZero()')
-    })
+  it('putETH fails without giftValue', async () => {
+    const hashHashKey = hashHash(nanoid())
+    await expect(
+      contract_giver.putETH(hashHashKey, 0, {
+        value: 1,
+      }),
+    ).to.be.revertedWith('AmountMustBeGreaterThanZero()')
+  })
 
-    it('putETH fails when value is not larger than amount', async () => {
-      const hashHashKey = hashHash(nanoid())
+  it('putETH fails when value is not larger than amount', async () => {
+    const hashHashKey = hashHash(nanoid())
 
-      await expect(
-        contract_giver.putETH(hashHashKey, 1, {
-          value: 1,
-        }),
-      ).to.be.revertedWith('ValueMustBeGreaterThanAmount()')
-    })
+    await expect(
+      contract_giver.putETH(hashHashKey, 1, {
+        value: 1,
+      }),
+    ).to.be.revertedWith('ValueMustBeGreaterThanAmount()')
+  })
 
-    it('putETH fails when not enough value for extra gas', async () => {
-      const amount = 1
-      const value = 2
-      const requiredGas = await contract_giver.getRequiredGas()
-      const hashHashKey = hashHash(nanoid())
+  it('putETH fails when not enough value for extra gas', async () => {
+    const amount = 1
+    const value = 2
+    const requiredGas = await contract_giver.getRequiredGas()
+    const hashHashKey = hashHash(nanoid())
 
-      await expect(
-        contract_giver.putETH(hashHashKey, amount, { value }),
-      ).to.be.revertedWith(
-        `NotEnoughGiftGas(${value - amount}, ${requiredGas})`,
-      )
-    })
+    await expect(
+      contract_giver.putETH(hashHashKey, amount, { value }),
+    ).to.be.revertedWith(`NotEnoughGiftGas(${value - amount}, ${requiredGas})`)
+  })
 
-    it('putETH saves gift', async () => {
-      const key = nanoid()
-      const hashHashKey = hashHash(key)
-      const requiredGas = await contract_giver.getRequiredGas()
-      const giftValue = utils.parseEther('1')
-      const value = giftValue.add(requiredGas)
+  it('putETH saves gift', async () => {
+    const key = nanoid()
+    const hashHashKey = hashHash(key)
+    const requiredGas = await contract_giver.getRequiredGas()
+    const giftValue = utils.parseEther('1')
+    const value = giftValue.add(requiredGas)
 
-      expect(await contract_giver.getMyGifts()).to.be.empty
+    expect(await contract_giver.getMyGifts()).to.be.empty
 
-      await expect(() =>
-        contract_giver.putETH(hashHashKey, giftValue, {
-          value,
-        }),
-      ).changeEtherBalances(
-        [giverAddr, ownerAddr, contract_giver],
-        [
-          BigNumber.from(0).sub(value),
-          requiredGas.div(2),
-          giftValue.add(requiredGas.div(2)),
-        ],
-      )
-
-      expect(await contract_giver.getMyGifts()).to.have.lengthOf(1)
-
-      await expect(contract_giver.has(hashHashKey)).to.be.reverted
-
-      expect(await contract_owner.has(hashHashKey)).to.be.true
-
-      const gift = await contract_owner.get(hashHashKey)
-
-      expect(gift.sender).to.eq(await contract_giver.signer.getAddress())
-      expect(gift.giftValue).to.eq(giftValue)
-      expect(gift.giftType).to.eq(GiftType.ETH)
-    })
-
-    it('redeemGift', async () => {
-      const key = nanoid()
-      const hashHashKey = hashHash(key)
-      const requiredGas = await contract_giver.getRequiredGas()
-      const giftValue = utils.parseEther('1')
-      const value = giftValue.add(requiredGas)
-      await contract_giver.putETH(hashHashKey, giftValue, {
+    await expect(() =>
+      contract_giver.putETH(hashHashKey, giftValue, {
         value,
-      })
+      }),
+    ).changeEtherBalances(
+      [giverAddr, ownerAddr, contract_giver],
+      [
+        BigNumber.from(0).sub(value),
+        requiredGas.div(2),
+        giftValue.add(requiredGas.div(2)),
+      ],
+    )
 
-      const contract_receiver = contract.connect(receiverAddr)
+    expect(await contract_giver.getMyGifts()).to.have.lengthOf(1)
 
-      await expect(
-        contract_receiver.redeemGift('wrong key'),
-      ).to.be.revertedWith(`WrongKey`)
+    await expect(contract_giver.has(hashHashKey)).to.be.reverted
 
-      expect(await contract_owner.has(hashHashKey)).to.be.true
+    expect(await contract_owner.has(hashHashKey)).to.be.true
 
-      await expect(() => contract_receiver.redeemGift(key)).changeEtherBalances(
-        [receiverAddr, contract],
-        [giftValue, BigNumber.from(0).sub(giftValue)],
-      )
+    const gift = await contract_owner.get(hashHashKey)
 
-      const gift = await contract_owner.get(hashHashKey)
+    expect(gift.sender).to.eq(await contract_giver.signer.getAddress())
+    expect(gift.giftValue).to.eq(giftValue)
+    expect(gift.giftType).to.eq(GiftType.ETH)
+  })
 
-      expect(gift.redeemer).to.eq(await receiverAddr.getAddress())
-      expect(gift.status).equal(GiftStatus.REDEEMED)
+  it('redeemGift', async () => {
+    const key = nanoid()
+    const hashHashKey = hashHash(key)
+    const requiredGas = await contract_giver.getRequiredGas()
+    const giftValue = utils.parseEther('1')
+    const value = giftValue.add(requiredGas)
 
-      await expect(contract_receiver.redeemGift(key)).to.be.revertedWith(
-        'GiftAlreadyRedeemed',
-      )
+    await contract_giver.putETH(hashHashKey, giftValue, {
+      value,
     })
 
-    it('provideTranswerETH', async () => {
-      const key = nanoid()
-      const hashKey = hash(key)
-      const hashHashKey = hashHash(key)
-      const requiredGas = await contract_giver.getRequiredGas()
-      const amount = utils.parseEther('1')
-      const value = amount.add(requiredGas)
+    const contract_receiver = contract.connect(receiverAddr)
 
-      await contract_giver.putETH(hashHashKey, amount, {
-        value,
-      })
+    await expect(contract_receiver.redeemGift('wrong key')).to.be.revertedWith(
+      `WrongKey`,
+    )
 
-      const receiverAddress = await receiverAddr.getAddress()
+    expect(await contract_owner.has(hashHashKey)).to.be.true
 
-      await expect(
-        contract_giver.provideTransferETH(receiverAddress, hashKey),
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+    await expect(() => contract_receiver.redeemGift(key)).changeEtherBalances(
+      [receiverAddr, contract],
+      [giftValue, BigNumber.from(0).sub(giftValue)],
+    )
 
-      await expect(
-        contract_owner.provideTransferETH(receiverAddress, hash('wrong-key')),
-      ).to.be.revertedWith('WrongKey')
+    const gift = await contract_owner.get(hashHashKey)
 
-      await expect(() =>
-        contract_owner.provideTransferETH(receiverAddress, hashKey),
-      ).changeEtherBalances(
-        [receiverAddr, contract],
-        [requiredGas.div(2), BigNumber.from(0).sub(requiredGas.div(2))],
-      )
+    expect(gift.redeemer).to.eq(await receiverAddr.getAddress())
+    expect(gift.status).equal(GiftStatus.REDEEMED)
 
-      await expect(
-        contract_owner.provideTransferETH(receiverAddress, hashKey),
-      ).to.be.revertedWith('NoGiftGas')
+    await expect(contract_receiver.redeemGift(key)).to.be.revertedWith(
+      'GiftAlreadyRedeemed',
+    )
+  })
 
-      const gift = await contract_owner.get(hashHashKey)
+  it('provideTranswerETH', async () => {
+    const key = nanoid()
+    const hashKey = hash(key)
+    const hashHashKey = hashHash(key)
+    const requiredGas = await contract_giver.getRequiredGas()
+    const amount = utils.parseEther('1')
+    const value = amount.add(requiredGas)
 
-      expect(gift.giftGas).eq(0)
-      expect(gift.status).equal(GiftStatus.PENDING)
+    await contract_giver.putETH(hashHashKey, amount, {
+      value,
     })
+
+    const receiver = ethers.Wallet.createRandom().connect(ethers.provider)
+
+    const receiverAddress = await receiver.getAddress()
+
+    expect(await receiver.getBalance()).to.eq(0)
+
+    await expect(
+      contract_giver.provideTransferETH(receiverAddress, hashKey),
+    ).to.be.revertedWith('Ownable: caller is not the owner')
+
+    await expect(
+      contract_owner.provideTransferETH(receiverAddress, hash('wrong-key')),
+    ).to.be.revertedWith('WrongKey')
+
+    await expect(() =>
+      contract_owner.provideTransferETH(receiverAddress, hashKey),
+    ).changeEtherBalances(
+      [receiver, contract, ownerAddr],
+      [requiredGas.div(2), BigNumber.from(0).sub(requiredGas.div(2)), 0],
+    )
+
+    await expect(
+      contract_owner.provideTransferETH(receiverAddress, hashKey),
+    ).to.be.revertedWith('NoGiftGas')
+
+    const gift = await contract_owner.get(hashHashKey)
+
+    expect(gift.giftGas).eq(0)
+    expect(gift.status).equal(GiftStatus.PENDING)
   })
 })
