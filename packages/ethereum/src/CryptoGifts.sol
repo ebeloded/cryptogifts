@@ -42,8 +42,6 @@ interface ICryptoGifts {
 // }
 
 contract CryptoGifts is Ownable {
-  int256 public num;
-  /// maps hash(hash(key)) to gift
   mapping(bytes => Gift) private gifts;
   mapping(address => bytes[]) private giftsBySender;
 
@@ -181,6 +179,8 @@ contract CryptoGifts is Ownable {
     address payable _receiver,
     bytes calldata _hashKey
   ) external onlyOwner {
+    uint256 u0 = gasleft();
+
     bytes memory hashHashKey = abi.encodePacked(hashBytes(_hashKey));
 
     Gift storage gift = gifts[hashHashKey];
@@ -193,9 +193,13 @@ contract CryptoGifts is Ownable {
 
       gift.giftGas = 0;
     }
+
+    console.log('provideTransferETH gas used', u0 - gasleft());
   }
 
   function redeemGift(string calldata _key) external {
+    uint256 u0 = gasleft();
+
     bytes memory hashHashKey = abi.encodePacked(hashHash(_key));
 
     Gift storage gift = gifts[hashHashKey];
@@ -205,5 +209,7 @@ contract CryptoGifts is Ownable {
       gift.redeemer = msg.sender;
       payable(msg.sender).transfer(gift.giftValue);
     }
+
+    console.log('redeemGift gas used', u0 - gasleft());
   }
 }
