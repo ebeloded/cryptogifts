@@ -11,12 +11,14 @@ enum GiftType {
   ERC20 = 1,
   ERC721 = 2,
 }
+
 enum GiftStatus {
   NONE = 0,
   PENDING = 1,
   REDEEMED = 2,
   REVOKED = 3,
 }
+
 describe('Cryptogifts', () => {
   let contractFactory: CryptoGifts__factory
   let contract: CryptoGifts
@@ -34,15 +36,6 @@ describe('Cryptogifts', () => {
     )) as CryptoGifts__factory
 
     contract = await contractFactory.deploy()
-  })
-
-  describe('getRequiredGas', async () => {
-    const MINIMUM_GAS = BigNumber.from(1) // wei
-
-    it('getRequiredGas retuns value greater than zero', async () => {
-      const requiredGas = await contract.getRequiredGas()
-      expect(requiredGas).to.be.gt(MINIMUM_GAS)
-    })
   })
 
   describe('hashing', async () => {
@@ -96,10 +89,23 @@ describe('Cryptogifts', () => {
     })
   })
 
+  describe('getRequiredGas', async () => {
+    const MINIMUM_GAS = BigNumber.from(1) // wei
+
+    it('getRequiredGas retuns value greater than zero', async () => {
+      const requiredGas = await contract.getRequiredGas()
+      expect(requiredGas).to.be.gt(MINIMUM_GAS)
+    })
+  })
+
   describe('putETH', async () => {
     beforeEach(async () => {
       contract_owner = contract.connect(ownerAddr)
       contract_giver = contract.connect(giverAddr)
+    })
+
+    it('getMyGifts', async () => {
+      expect(await contract.getMyGifts()).to.be.empty
     })
 
     it('putETH fails without value', async () => {
@@ -109,7 +115,7 @@ describe('Cryptogifts', () => {
       )
     })
 
-    it('putETH fails without amount', async () => {
+    it('putETH fails without giftValue', async () => {
       const hashHashKey = hashHash(nanoid())
       await expect(
         contract_giver.putETH(hashHashKey, 0, {
@@ -148,6 +154,8 @@ describe('Cryptogifts', () => {
       const giftValue = utils.parseEther('1')
       const value = giftValue.add(requiredGas)
 
+      expect(await contract_giver.getMyGifts()).to.be.empty
+
       await expect(() =>
         contract_giver.putETH(hashHashKey, giftValue, {
           value,
@@ -160,6 +168,8 @@ describe('Cryptogifts', () => {
           giftValue.add(requiredGas.div(2)),
         ],
       )
+
+      expect(await contract_giver.getMyGifts()).to.have.lengthOf(1)
 
       await expect(contract_giver.has(hashHashKey)).to.be.reverted
 
@@ -219,8 +229,9 @@ describe('Cryptogifts', () => {
 
       const receiverAddress = await receiverAddr.getAddress()
 
-      await expect(contract_giver.provideTransferETH(receiverAddress, hashKey))
-        .to.be.reverted
+      await expect(
+        contract_giver.provideTransferETH(receiverAddress, hashKey),
+      ).to.be.revertedWith('Ownable: caller is not the owner')
 
       await expect(
         contract_owner.provideTransferETH(receiverAddress, hash('wrong-key')),
