@@ -4,25 +4,25 @@
   "description": "",
   "main": "index.ts",
   "watch": {
-    "compile": {
+    "test": {
       "patterns": [
-        "src"
+        "src",
+        "test"
       ],
-      "extensions": "sol",
-      "quiet": false
+      "extensions": "ts,sol"
     }
   },
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
-    "compile:watch": "chokidar \"src/*\" -c \"npm run compile\"",
+    "compile:watch": "chokidar \"src/*\" -c \"hardhat compile\"",
     "clean": "hardhat clean",
     "deploy": "hardhat deploy",
     "deploy:localhost": "hardhat deploy --network localhost",
     "test+deploy": "run-s test deploy:localhost",
     "test:watch": "chokidar \"test/*.ts\" \"src/*\" -c \"hardhat test\"",
     "start": "hardhat node",
-    "dev": "run-p start watch",
+    "dev": "run-p compile:watch test:watch",
     "watch": "npm-watch"
   },
   "keywords": [],
