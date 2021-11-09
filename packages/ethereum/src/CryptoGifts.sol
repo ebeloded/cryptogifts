@@ -130,6 +130,15 @@ contract CryptoGifts is Ownable {
     return gifts[_hashHashKey];
   }
 
+  function getGiftGasValue(bytes calldata _hashHashKey)
+    external
+    view
+    onlyOwner
+    returns (uint256)
+  {
+    return gifts[_hashHashKey].giftGas;
+  }
+
   function hashString(string memory _key) public pure returns (bytes32) {
     return keccak256(abi.encodePacked(_key));
   }
