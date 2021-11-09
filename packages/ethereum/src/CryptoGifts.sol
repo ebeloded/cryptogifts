@@ -47,8 +47,15 @@ contract CryptoGifts is Ownable {
   mapping(bytes => Gift) private gifts;
   mapping(address => bytes[]) private giftsBySender;
 
-  function getMyGifts() external view returns (bytes[] memory keys) {
-    keys = giftsBySender[msg.sender];
+  function getMyGifts() external view returns (Gift[] memory) {
+    bytes[] memory keys = giftsBySender[msg.sender];
+
+    Gift[] memory myGifts = new Gift[](keys.length);
+    for (uint256 i = 0; i < keys.length; i++) {
+      myGifts[i] = gifts[keys[i]];
+    }
+
+    return myGifts;
   }
 
   function getRequiredGas() public pure returns (uint256) {
