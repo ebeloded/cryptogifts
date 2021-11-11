@@ -6,6 +6,7 @@ const config = {
   preprocess: preprocess(),
 
   kit: {
+    floc: true,
     adapter: adapterStatic(),
   },
 }
