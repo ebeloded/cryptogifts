@@ -4,7 +4,6 @@
 <script lang="ts">
 import { onMount } from 'svelte'
 import detectEthereumProvider from '@metamask/detect-provider'
-import WalletLink from 'walletlink'
 
 // import { ethers } from 'ethers'
 import { browser } from '$app/env'

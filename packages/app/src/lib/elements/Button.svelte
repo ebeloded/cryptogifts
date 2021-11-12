@@ -14,6 +14,7 @@ export let size: 'x-small' | 'small' | 'medium' | 'large' | 'x-large' = 'medium'
 </script>
 
 <button
+  on:click
   type="{submit ? 'submit' : 'button'}"
   disabled="{disabled || loading}"
   data-style="{style}"

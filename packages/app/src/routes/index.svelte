@@ -1,11 +1,30 @@
 <script lang="ts">
+import ConnectWalletButton from '$lib/components/ConnectWalletButton.svelte'
+
 import { Button, Checkbox, Select } from '$lib/elements'
+import { networkStore, accountStore, userStore } from '$lib/stores'
+
+$: {
+  console.log('networkStore', $networkStore)
+  console.log('accountStore', $accountStore)
+  console.log('userStore', $userStore)
+}
 </script>
 
+<pre>
+  {JSON.stringify($networkStore, null, 2)}
+</pre>
+<pre>
+  {JSON.stringify($userStore, null, 2)}
+</pre>
 <slot />
 <header>
-  <a>Crypto Gifts</a>
-  <Button>Connect Wallet</Button>
+  <a href="/">Crypto Gifts</a>
+  {#if $accountStore}
+    {$accountStore}
+  {:else}
+    <ConnectWalletButton>Connect Wallet</ConnectWalletButton>
+  {/if}
 </header>
 
 <section>
