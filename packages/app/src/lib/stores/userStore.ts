@@ -10,6 +10,7 @@ interface User {
   balance: any
   network: any
   contract: any
+  signer: any
 }
 
 export const userStore = derived<any, User>(
@@ -29,6 +30,7 @@ export const userStore = derived<any, User>(
           ensName,
           balance,
           network,
+          signer,
           contract: getContract(signer),
         })
       })

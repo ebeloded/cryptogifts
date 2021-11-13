@@ -6,10 +6,15 @@ import {
   FormInputLabel,
   TextInput,
 } from '$lib/elements'
-import { networkStore } from '$lib/stores'
+import { networkStore, providerStore } from '$lib/stores'
+import type { CryptoGifts } from '@cryptogifts/ethereum/contracts'
+import { ethers, Signer, utils } from 'ethers'
+import { nanoid } from 'nanoid'
 
-import { contract } from '@cryptogifts/ethereum'
-import ConnectWalletButton from './ConnectWalletButton.svelte'
+import { onMount } from 'svelte'
+
+export let contract: CryptoGifts
+export let signer: Signer
 
 const form = {
   value: '',
@@ -17,42 +22,77 @@ const form = {
   network: '',
 }
 
-const giftTypes = [
-  {
-    label: 'ETH',
-    value: 'eth',
-  },
-  {
-    label: 'Fungible Tokens (ERC-20)',
-    value: 'erc20',
-  },
-  {
-    label: 'NFTs (ERC-721)',
-    value: 'erc721',
-  },
-]
+// const giftTypes = [
+//   {
+//     label: 'ETH',
+//     value: 'eth',
+//   },
+//   {
+//     label: 'Fungible Tokens (ERC-20)',
+//     value: 'erc20',
+//   },
+//   {
+//     label: 'NFTs (ERC-721)',
+//     value: 'erc721',
+//   },
+// ]
 
-function addGift() {
-  console.log('addGift')
-  // contract(true)
-  //   .putETH(key, amount, {
-  //     value,
-  //   })
-  //   .catch((error) => {
-  //     console.log({ error })
-  //   })
-  //   .then((result) => {
-  //     console.log({ result })
-  //   })
+async function addGift() {
+  console.log('addGift', form)
+  const key = nanoid()
+  const requiredGas = await contract.getRequiredGas()
+  const hashHashKey = utils.keccak256(utils.keccak256(utils.toUtf8Bytes(key)))
+  const giftValue = utils.parseEther(String(form.value))
+  const value = giftValue.add(requiredGas)
+
+  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } =
+    await signer.getFeeData()
+  console.log({
+    gasPrice: utils.formatEther(gasPrice),
+    maxFeePerGas: utils.formatEther(maxFeePerGas),
+    maxPriorityFeePerGas: utils.formatEther(maxPriorityFeePerGas),
+  })
+
+  console.log({
+    key,
+    hashHashKey,
+    requiredGas,
+    giftValue,
+    value,
+  })
+
+  contract
+    .putETH(hashHashKey, giftValue, {
+      value,
+    })
+    .then(
+      (result) => {
+        console.log({ result })
+
+        result.wait(1).then(() => {
+          console.log('done')
+        })
+      },
+      (err) => {
+        console.log({ err })
+      },
+    )
 }
+let balance
+const getBalance = async () => {
+  balance = await signer.getBalance().then(ethers.utils.formatEther)
+}
+onMount(() => {
+  getBalance()
+})
 
-let selectedGift = []
+// let selectedGift = []
 </script>
 
 <Card>
   <form on:submit|preventDefault="{addGift}">
     <fieldset class="space-y-6">
-      <div>
+      <!-- <div>
         <FormInputLabel>Select Gift Type:</FormInputLabel>
         <ul class="grid gap-2 my-2">
           {#each giftTypes as giftType}
@@ -66,12 +106,12 @@ let selectedGift = []
             </li>
           {/each}
         </ul>
-      </div>
+      </div> -->
 
       <div>
         <TextInput
           label="Gift Amount"
-          hint="Hello"
+          hint="You have {balance} ETH"
           bind:value="{form.value}"
           type="number"
           placeholder="Gift Amount"

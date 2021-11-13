@@ -2,20 +2,21 @@
 import { Button, TextInput } from '$lib/elements'
 import { userStore } from '$lib/stores'
 import type { CryptoGifts } from '@cryptogifts/ethereum/contracts'
+import { ethers } from 'ethers'
 
 export let contract: CryptoGifts
 
 let value = ''
 let hash: string | undefined
 
-async function hashString() {
-  hash = await contract.hashString(value)
+async function testFun() {
+  hash = await contract.getRequiredGas().then(ethers.utils.formatEther)
 }
 </script>
 
 <TextInput bind:value />
 
-<Button on:click="{hashString}">Hash</Button>
+<Button on:click="{testFun}">Hash</Button>
 
 <pre>
 hash: {hash}

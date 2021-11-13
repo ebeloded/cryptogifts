@@ -1,5 +1,5 @@
 <script lang="ts">
-import { accountStore } from '$lib/stores'
+import { accountStore, userStore } from '$lib/stores'
 import { CreateGift, ConnectWalletButton } from '$lib/components'
 import { scale } from 'svelte/transition'
 </script>
@@ -14,9 +14,11 @@ import { scale } from 'svelte/transition'
   </div>
 
   <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-    {#if $accountStore}
+    {#if $userStore}
       <div in:scale="{{ start: 0.9 }}">
-        <CreateGift />
+        <CreateGift
+          contract="{$userStore.contract}"
+          signer="{$userStore.signer}" />
       </div>
     {:else if $accountStore === null}
       <ConnectWalletButton />
