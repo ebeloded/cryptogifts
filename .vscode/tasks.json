@@ -8,7 +8,18 @@
       "type": "npm",
       "script": "app:dev",
       "isBackground": true,
-      "problemMatcher": []
+      "problemMatcher": [],
+      "group": "none",
+      "runOptions": {
+        "instanceLimit": 1,
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "echo": true,
+        "group": "dev",
+        "clear": true,
+        "panel": "dedicated"
+      }
     }
   ]
 }
