@@ -7,23 +7,18 @@ function createAccountStore() {
 
   const updateAccounts = ([account]) => set(account)
 
-  providerPromise.then(({ ethereum }) => {
-    ethereum
-      .request({
-        method: 'eth_accounts',
-      })
-      .then(updateAccounts)
+  providerPromise.then(({ provider, ethereum }) => {
+    provider.send('eth_accounts', []).then(updateAccounts)
 
     ethereum.on('accountsChanged', updateAccounts)
   })
 
   return {
     subscribe,
+
     requestAccount: () =>
-      providerPromise.then(({ ethereum }) =>
-        ethereum.request({
-          method: 'eth_requestAccounts',
-        }),
+      providerPromise.then(({ provider }) =>
+        provider.send('eth_requestAccounts', []),
       ),
   }
 }

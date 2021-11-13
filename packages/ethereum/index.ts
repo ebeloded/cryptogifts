@@ -4,25 +4,17 @@ declare global {
   }
 }
 
-import { ethers, utils } from 'ethers'
+import type { ethers } from 'ethers'
 import { CryptoGifts__factory } from './contracts'
 import addresses from './contracts/addresses.json'
-import accounts from './hardhat-accounts.json'
 
 const ADDRESS = addresses.localhost.Cryptogift
-export const provider = () => new ethers.providers.JsonRpcProvider()
-const signer = () => {
-  return new ethers.Wallet(accounts[0].private_key, provider())
-}
 
-export const contract = (sign: boolean = false) => {
-  console.log({ ADDRESS })
-  const s = sign ? signer() : provider()
-  return CryptoGifts__factory.connect(ADDRESS, s)
-}
-
-export const getBalance = async () => {
-  return provider().getBalance(ADDRESS)
+export const getContract = (
+  signerOrProvider: ethers.Signer | ethers.providers.Provider,
+) => {
+  console.log('getting contract', { ADDRESS, signerOrProvider })
+  return CryptoGifts__factory.connect(ADDRESS, signerOrProvider)
 }
 
 // export const get = async (key: string) => {

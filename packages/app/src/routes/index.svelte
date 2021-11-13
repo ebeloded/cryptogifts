@@ -1,24 +1,18 @@
 <script lang="ts">
+import { TestContract } from '$lib/components'
 import { Button, Checkbox, Select } from '$lib/elements'
-import { networkStore, accountStore, userStore } from '$lib/stores'
-
-$: {
-  console.log('networkStore', $networkStore)
-  console.log('accountStore', $accountStore)
-  console.log('userStore', $userStore)
-}
+import {
+  providerStore,
+  networkStore,
+  accountStore,
+  userStore,
+} from '$lib/stores'
 </script>
 
-<pre>
-  {JSON.stringify($networkStore, null, 2)}
-</pre>
-<pre>
-  {JSON.stringify($userStore, null, 2)}
-</pre>
 <slot />
 
 <section>
-  <h1>Send crypto cards to people without wallets</h1>
+  <h1>Send crypto to people without crypto</h1>
   <div class="text-center">
     <Button href="/create-gift">Create Gift</Button>
   </div>
@@ -27,6 +21,11 @@ $: {
   </p>
 </section>
 
+{#if $providerStore}
+  <TestContract contract="{$providerStore.contract}" />
+{/if}
+
+<!--
 <section id="fetures">Features</section>
 <section id="how">How it works</section>
 <section id="faq">
@@ -35,4 +34,4 @@ $: {
   <p>Is this safe? Won't you steal my money?</p>
 </section>
 <section id="roadmap">Roadmap</section>
-<section id="under-the-hood">Under the hood</section>
+<section id="under-the-hood">Under the hood</section> -->

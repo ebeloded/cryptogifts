@@ -1,16 +1,17 @@
-import { writable, Writable } from 'svelte/store'
+import { writable } from 'svelte/store'
+import type { Writable } from 'svelte/store'
 import ls from 'safe-ls'
 
 export const lsStore = (key: string): Writable<any> => {
   const storage = ls(key)
-  const { set, subscribe, update } = writable(storage.get())
-
-  const unsubscribe = subscribe((value) => storage.set(value))
+  console.log('inside lsStore', storage.get())
+  const { set, update, subscribe } = writable(storage.get())
 
   return {
-    subscribe,
-    set,
+    set: (value: any) =>
+      Promise.resolve(set(value)).then(() => storage.set(value)),
     update,
+    subscribe,
   }
 }
 

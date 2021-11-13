@@ -5,15 +5,17 @@ import '$lib/styles/tailwind.css'
 
 <script lang="ts">
 import { networkStore, accountStore, userStore } from '$lib/stores'
-import ConnectWalletButton from '$lib/components/ConnectWalletButton.svelte'
+import { ConnectWalletButton, UserInfo } from '$lib/components'
 </script>
 
 <header>
   <a href="/">Crypto Gifts</a>
   {#if $accountStore}
-    {$accountStore}
-  {:else}
+    <UserInfo />
+  {:else if $accountStore === null}
     <ConnectWalletButton>Connect Wallet</ConnectWalletButton>
+  {:else}
+    Loading...
   {/if}
 </header>
 

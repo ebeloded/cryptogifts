@@ -3,8 +3,13 @@ import { ethers } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider'
 
 import { browser } from '$app/env'
+import { getContract } from '@cryptogifts/ethereum'
 
-type Network = {}
+type Network = {
+  name: string
+  chainId: number
+  ensAddress?: string
+}
 
 const NoEthereumProviderError = () => new Error('No Ethereum provider found')
 
@@ -14,6 +19,7 @@ export const providerPromise = browser
       timeout: 1000,
     }).then((ethereum: import('eip1193-provider').default | null) => {
       if (!ethereum) throw NoEthereumProviderError
+
       return {
         ethereum,
         provider: new ethers.providers.Web3Provider(ethereum, 'any'),
@@ -27,7 +33,6 @@ function createNetworkStore() {
 
   providerPromise.then(
     ({ provider }) => {
-      provider.getNetwork().then(set)
       provider.on('network', set)
     },
     () => set(null),
@@ -39,3 +44,18 @@ function createNetworkStore() {
 }
 
 export const networkStore = createNetworkStore()
+
+export const providerStore = derived<
+  any,
+  null | { provider: any; contract: any }
+>(networkStore, ($network, set) => {
+  providerPromise.then(
+    ({ provider }) => {
+      set({
+        provider,
+        contract: getContract(provider),
+      })
+    },
+    () => set(null),
+  )
+})
