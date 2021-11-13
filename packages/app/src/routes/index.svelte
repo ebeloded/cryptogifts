@@ -1,6 +1,4 @@
 <script lang="ts">
-import ConnectWalletButton from '$lib/components/ConnectWalletButton.svelte'
-
 import { Button, Checkbox, Select } from '$lib/elements'
 import { networkStore, accountStore, userStore } from '$lib/stores'
 
@@ -18,18 +16,12 @@ $: {
   {JSON.stringify($userStore, null, 2)}
 </pre>
 <slot />
-<header>
-  <a href="/">Crypto Gifts</a>
-  {#if $accountStore}
-    {$accountStore}
-  {:else}
-    <ConnectWalletButton>Connect Wallet</ConnectWalletButton>
-  {/if}
-</header>
 
 <section>
   <h1>Send crypto cards to people without wallets</h1>
-  <Button>Create Gift</Button>
+  <div class="text-center">
+    <Button href="/create-gift">Create Gift</Button>
+  </div>
   <p>
     Have gift code? Redeem it <a href="/redeem-gift">here</a>
   </p>

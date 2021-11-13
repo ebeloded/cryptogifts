@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "deploy": "firebase deploy --only hosting",
-    "dev": "svelte-kit dev --host 0.0.0.0 --port 4000",
+    "dev": "svelte-kit dev --host 0.0.0.0 --port 4000 --open",
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
@@ -32,7 +32,7 @@
     "@walletconnect/web3-provider": "1.6.6",
     "clsx": "1.1.1",
     "ethers": "5.5.1",
-    "moralis": "0.0.128",
+    "nanoid": "3.1.30",
     "object-call-utils": "1.3.0",
     "ramda": "0.27.1",
     "safe-ls": "1.0.0",

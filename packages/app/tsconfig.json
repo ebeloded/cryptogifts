@@ -23,6 +23,7 @@
     "allowJs": true,
     "checkJs": true,
     "paths": {
+      "svelte/transition": ["./node_modules/svelte/transition"],
       "svelte/store": ["./node_modules/svelte/store"],
       "$lib": ["src/lib"],
       "$lib/*": ["src/lib/*"]
