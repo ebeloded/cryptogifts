@@ -15,11 +15,28 @@
         "runOn": "folderOpen"
       },
       "presentation": {
-        "echo": true,
-        "group": "dev",
-        "clear": true,
-        "panel": "dedicated"
+        "group": "dev"
       }
+    },
+    {
+      "label": "ethereum:dev",
+      "type": "npm",
+      "script": "ethereum:dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "none",
+      "runOptions": {
+        "instanceLimit": 1,
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "group": "dev"
+      }
+    },
+    {
+      "label": "dev",
+      "dependsOn": ["app:dev", "ethereum:dev"],
+      "problemMatcher": []
     }
   ]
 }

@@ -28,11 +28,13 @@ importers:
       '@sveltejs/adapter-static': 1.0.0-next.21
       '@sveltejs/kit': 1.0.0-next.195
       '@tailwindcss/forms': 0.3.4
+      '@tailwindcss/typography': 0.4.1
       '@walletconnect/client': 2.0.0-beta.20
       '@walletconnect/qrcode-modal': 1.6.6
       '@walletconnect/web3-provider': 1.6.6
       autoprefixer: 10.4.0
       clsx: 1.1.1
+      daisyui: 1.16.2
       eip1193-provider: 1.0.1
       ethers: 5.5.1
       nanoid: 3.1.30
@@ -41,6 +43,7 @@ importers:
       safe-ls: 1.0.0
       svelte: 3.44.1
       svelte-check: ^2.2.8
+      svelte-feather-icons: 3.5.0
       svelte-preprocess: 4.9.8
       svelte-trigger-action: 1.11.0
       tailwindcss: 2.2.19
@@ -56,11 +59,13 @@ importers:
       '@walletconnect/qrcode-modal': 1.6.6
       '@walletconnect/web3-provider': 1.6.6
       clsx: 1.1.1
+      daisyui: 1.16.2
       ethers: 5.5.1
       nanoid: 3.1.30
       object-call-utils: 1.3.0
       ramda: 0.27.1
       safe-ls: 1.0.0
+      svelte-feather-icons: 3.5.0
       svelte-trigger-action: 1.11.0
       walletlink: 2.2.6
       web3: 1.6.0
@@ -68,6 +73,7 @@ importers:
       '@sveltejs/adapter-static': 1.0.0-next.21
       '@sveltejs/kit': 1.0.0-next.195_svelte@3.44.1
       '@tailwindcss/forms': 0.3.4_tailwindcss@2.2.19
+      '@tailwindcss/typography': 0.4.1_tailwindcss@2.2.19
       autoprefixer: 10.4.0
       eip1193-provider: 1.0.1
       svelte: 3.44.1
@@ -1412,6 +1418,18 @@ packages:
       tailwindcss: '>=2.0.0'
     dependencies:
       mini-svg-data-uri: 1.4.3
+      tailwindcss: 2.2.19_autoprefixer@10.4.0
+    dev: true
+
+  /@tailwindcss/typography/0.4.1_tailwindcss@2.2.19:
+    resolution: {integrity: sha512-ovPPLUhs7zAIJfr0y1dbGlyCuPhpuv/jpBoFgqAc658DWGGrOBWBMpAWLw2KlzbNeVk4YBJMzue1ekvIbdw6XA==}
+    peerDependencies:
+      tailwindcss: '>=2.0.0'
+    dependencies:
+      lodash.castarray: 4.4.0
+      lodash.isplainobject: 4.0.6
+      lodash.merge: 4.6.2
+      lodash.uniq: 4.5.0
       tailwindcss: 2.2.19_autoprefixer@10.4.0
     dev: true
 
@@ -3907,6 +3925,10 @@ packages:
     dependencies:
       es5-ext: 0.10.53
       type: 1.2.0
+
+  /daisyui/1.16.2:
+    resolution: {integrity: sha512-kHoTvq3/eU8tPbu3U3Nwq7yy0I5zauqAYRSvw1x+t8g9FBjFm3jNtUQO/vBjUZsU7ABIf5aaT58iBF2NeusCUA==}
+    dev: false
 
   /dashdash/1.14.1:
     resolution: {integrity: sha1-hTz6D3y+L+1d4gMmuN1YEDX24vA=}
@@ -7664,6 +7686,10 @@ packages:
     dev: false
     optional: true
 
+  /lodash.castarray/4.4.0:
+    resolution: {integrity: sha1-wCUTUV4wna3dTCTGDP3c9ZdtkRU=}
+    dev: true
+
   /lodash.clonedeep/4.5.0:
     resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
     dev: false
@@ -7689,11 +7715,14 @@ packages:
 
   /lodash.isplainobject/4.0.6:
     resolution: {integrity: sha1-fFJqUtibRcRcxpC4gWO+BJf1UMs=}
-    dev: false
 
   /lodash.isstring/4.0.1:
     resolution: {integrity: sha1-1SfftUVuynzJu5XV2ur4i6VKVFE=}
     dev: false
+
+  /lodash.merge/4.6.2:
+    resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+    dev: true
 
   /lodash.once/4.1.1:
     resolution: {integrity: sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=}
@@ -7710,6 +7739,10 @@ packages:
   /lodash.union/4.6.0:
     resolution: {integrity: sha1-SLtQiECfFvGCFmZkHETdGqrjzYg=}
     dev: false
+
+  /lodash.uniq/4.5.0:
+    resolution: {integrity: sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=}
+    dev: true
 
   /lodash/4.17.20:
     resolution: {integrity: sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==}
@@ -10622,6 +10655,12 @@ packages:
       - sugarss
     dev: true
 
+  /svelte-feather-icons/3.5.0:
+    resolution: {integrity: sha512-AO6vwbI+WH8xouZRIxyenUV2olSAjp0QFgBa4esyS9ZxvBmKkRu9VTfgbMW0F1N7QTOWbMpgaForsnOcFGfXeg==}
+    dependencies:
+      svelte: 3.44.1
+    dev: false
+
   /svelte-hmr/0.14.7_svelte@3.44.1:
     resolution: {integrity: sha512-pDrzgcWSoMaK6AJkBWkmgIsecW0GChxYZSZieIYfCP0v2oPyx2CYU/zm7TBIcjLVUPP714WxmViE9Thht4etog==}
     peerDependencies:
@@ -10688,7 +10727,6 @@ packages:
   /svelte/3.44.1:
     resolution: {integrity: sha512-4DrCEJoBvdR689efHNSxIQn2pnFwB7E7j2yLEJtHE/P8hxwZWIphCtJ8are7bjl/iVMlcEf5uh5pJ68IwR09vQ==}
     engines: {node: '>= 8'}
-    dev: true
 
   /swarm-js/0.1.40:
     resolution: {integrity: sha512-yqiOCEoA4/IShXkY3WKwP5PvZhmoOOD8clsKA7EEcRILMkTEYHCQ21HDCAcVpmIxZq4LyZvWeRJ6quIyHk1caA==}

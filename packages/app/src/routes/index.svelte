@@ -1,5 +1,4 @@
 <script lang="ts">
-import { TestContract } from '$lib/components'
 import { Button, Checkbox, Select } from '$lib/elements'
 import {
   providerStore,
@@ -9,22 +8,22 @@ import {
 } from '$lib/stores'
 </script>
 
-<slot />
+<section class="hero">
+  <div class="text-center hero-content">
+    <div class="w-2/3">
+      <h1 class="mb-5 text-6xl font-bold leading-normal">
+        Send crypto gifts to people without wallets
+      </h1>
 
-<section>
-  <h1>Send crypto to people without crypto</h1>
-  <div class="text-center">
-    <Button href="/create-gift">Create Gift</Button>
+      <a class="btn btn-primary btn-lg px-10" href="/create-gift">
+        Create a Gift
+      </a>
+      <p class="mt-5">
+        Got a gift code? <a class="link" href="/redeem-gift">Redeem here</a>
+      </p>
+    </div>
   </div>
-  <p>
-    Have gift code? Redeem it <a href="/redeem-gift">here</a>
-  </p>
 </section>
-
-{#if $providerStore}
-  <TestContract contract="{$providerStore.contract}" />
-{/if}
-
 <!--
 <section id="fetures">Features</section>
 <section id="how">How it works</section>
@@ -35,3 +34,4 @@ import {
 </section>
 <section id="roadmap">Roadmap</section>
 <section id="under-the-hood">Under the hood</section> -->
+<slot />
