@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { ethers, utils } from 'ethers'
 import {
   from,
   switchMap,
@@ -6,12 +6,16 @@ import {
   startWith,
   identity,
   shareReplay,
-  withLatestFrom,
-  merge,
-  empty,
   map,
   concat,
   tap,
+  Observable,
+  mapTo,
+  withLatestFrom,
+  combineLatest,
+  distinctUntilChanged,
+  defer,
+  switchMapTo,
 } from 'rxjs'
 import detectEthereumProvider from '@metamask/detect-provider'
 
@@ -39,6 +43,11 @@ const getEthereumProvider = (privateKey?: string) =>
         }
       })
 
+const getContractAddress = () =>
+  import('../contracts-ts/addresses.json').then(
+    (addresses) => addresses.localhost.Cryptogift,
+  )
+
 export function connectEthereum(PK?: string) {
   const ethereumProviderPromise = getEthereumProvider(PK)
   const ethereumProvider$ = from(ethereumProviderPromise).pipe(shareReplay(1))
@@ -46,27 +55,80 @@ export function connectEthereum(PK?: string) {
   const network$ = ethereumProvider$.pipe(
     switchMap(({ provider }) => fromEvent(provider, 'network', identity)),
     startWith(void 0),
+    tap((v) => console.log('network$', v)),
+    shareReplay(1),
   )
-  const account$ = ethereumProvider$
-    .pipe(
-      switchMap(({ ethereum, provider }) =>
-        concat(
-          from(provider.send('eth_accounts', [])),
-          fromEvent(ethereum, 'accountsChanged'),
-        ),
+
+  const block$ = ethereumProvider$.pipe(
+    switchMap(({ provider }) => fromEvent(provider, 'block')),
+    tap((v) => console.log('blockUpdate$', v)),
+  )
+
+  const address$ = ethereumProvider$.pipe(
+    switchMap(({ ethereum, provider }) =>
+      concat(
+        from(provider.send('eth_accounts', [])),
+        fromEvent(ethereum, 'accountsChanged'),
       ),
-      map(([account]) => account),
-      startWith(void 0),
+    ),
+    map(([address]) => address || null),
+    startWith(void 0),
+    distinctUntilChanged(),
+    tap((v) => console.log('address$', v)),
+    shareReplay(1),
+  )
+
+  const user$ = combineLatest([ethereumProvider$, address$, network$]).pipe(
+    switchMap(async ([{ provider, getSigner }, address]) => {
+      const getBalance = () => getSigner().getBalance().then(utils.formatEther)
+      return address
+        ? {
+            address,
+            name: await provider.lookupAddress(address).catch(() => null),
+            avatar: '', //TODO: fetch avatar
+            getBalance,
+            balance$: block$.pipe(
+              switchMapTo(defer(getBalance)),
+              distinctUntilChanged(),
+            ),
+          }
+        : null
+    }),
+    tap((v) => console.log('user$', v)),
+  )
+
+  const connectAccount = () =>
+    ethereumProviderPromise.then(({ provider }) =>
+      provider.send('eth_requestAccounts', []),
     )
-    .pipe(tap((v) => console.log('account', v)))
-  const contract = ''
+
+  const changeNetwork = () => {}
+
+  const signer$ = combineLatest([ethereumProvider$, address$, network$]).pipe(
+    map(([{ getSigner, provider }], address) =>
+      address ? getSigner() : provider,
+    ),
+    tap((v) => console.log('signer$', v)),
+  )
+
+  const contract$ = signer$.pipe(
+    withLatestFrom(defer(getContractAddress)),
+    switchMap(([signer, address]) =>
+      import('../contracts-ts').then(({ CryptoGifts__factory }) =>
+        CryptoGifts__factory.connect(address, signer),
+      ),
+    ),
+    tap((v) => console.log('contract$', v)),
+  )
 
   return {
     network$,
-    account$,
-    contract,
-    async connectAccount() {},
-    async setNetwork(network: any) {},
+    address$,
+    contract$,
+    user$,
+    block$,
+    connectAccount,
+    changeNetwork,
   }
 }
 
