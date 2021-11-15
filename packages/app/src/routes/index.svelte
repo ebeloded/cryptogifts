@@ -1,18 +1,11 @@
 <script lang="ts">
-import { Button, Checkbox, Select } from '$lib/elements'
-import {
-  providerStore,
-  networkStore,
-  accountStore,
-  userStore,
-} from '$lib/stores'
 </script>
 
 <section class="hero">
   <div class="text-center hero-content">
     <div class="w-2/3">
       <h1 class="mb-5 text-6xl font-bold leading-normal">
-        Send crypto gifts to people without wallets
+        Send crypto to people without wallets
       </h1>
 
       <a class="btn btn-primary btn-lg px-10" href="/create-gift">

@@ -3,7 +3,6 @@ import { ethers } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider'
 
 import { browser } from '$app/env'
-import { getContract } from '@cryptogifts/ethereum'
 
 type Network = {
   name: string

@@ -1,21 +1,21 @@
-declare global {
-  interface Window {
-    ethereum?: import('eip1193-provider').default
-  }
-}
+// declare global {
+//   interface Window {
+//     ethereum?: import('eip1193-provider').default
+//   }
+// }
 
-import type { ethers } from 'ethers'
-import { CryptoGifts__factory } from './contracts'
-import addresses from './contracts/addresses.json'
+// import type { ethers } from 'ethers'
+// import { CryptoGifts__factory } from './contracts'
+// import addresses from './contracts/addresses.json'
 
-const ADDRESS = addresses.localhost.Cryptogift
+// const ADDRESS = addresses.localhost.Cryptogift
 
-export const getContract = (
-  signerOrProvider: ethers.Signer | ethers.providers.Provider,
-) => {
-  console.log('getting contract', { ADDRESS, signerOrProvider })
-  return CryptoGifts__factory.connect(ADDRESS, signerOrProvider)
-}
+// export const getContract = (
+//   signerOrProvider: ethers.Signer | ethers.providers.Provider,
+// ) => {
+//   console.log('getting contract', { ADDRESS, signerOrProvider })
+//   return CryptoGifts__factory.connect(ADDRESS, signerOrProvider)
+// }
 
 // export const get = async (key: string) => {
 //   const data = Cryptogift__factory.createInterface().encodeFunctionData('get', [

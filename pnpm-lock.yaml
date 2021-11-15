@@ -88,6 +88,7 @@ importers:
       '@ethersproject/abi': 5.5.0
       '@ethersproject/bytes': 5.5.0
       '@ethersproject/providers': 5.5.0
+      '@metamask/detect-provider': 1.2.0
       '@nomiclabs/hardhat-ethers': 2.0.2
       '@nomiclabs/hardhat-etherscan': 2.1.7
       '@nomiclabs/hardhat-waffle': 2.0.1
@@ -106,6 +107,7 @@ importers:
       hardhat-deploy: 0.9.6
       hardhat-gas-reporter: 1.0.4
       nanoid: 3.1.30
+      rxjs: 7.4.0
       solhint: 3.3.6
       solidity-coverage: 0.7.17
       ts-node: 10.4.0
@@ -115,9 +117,11 @@ importers:
       '@ethersproject/abi': 5.5.0
       '@ethersproject/bytes': 5.5.0
       '@ethersproject/providers': 5.5.0
+      '@metamask/detect-provider': 1.2.0
       '@openzeppelin/contracts': 4.3.3
       ethers: 5.5.1
       nanoid: 3.1.30
+      rxjs: 7.4.0
     devDependencies:
       '@nomiclabs/hardhat-ethers': 2.0.2_ethers@5.5.1+hardhat@2.6.8
       '@nomiclabs/hardhat-etherscan': 2.1.7_hardhat@2.6.8
@@ -9807,6 +9811,12 @@ packages:
     dependencies:
       tslib: 1.14.1
 
+  /rxjs/7.4.0:
+    resolution: {integrity: sha512-7SQDi7xeTMCJpqViXh8gL/lebcwlp3d831F05+9B44A4B0WfsEwUQHR64gsH1kvJ+Ep/J9K2+n1hVl1CsGN23w==}
+    dependencies:
+      tslib: 2.1.0
+    dev: false
+
   /sade/1.7.4:
     resolution: {integrity: sha512-y5yauMD93rX840MwUJr7C1ysLFBgMspsdTo4UVrDg3fXDvtwOyIqykhVAAm6fk/3au77773itJStObgK+LKaiA==}
     engines: {node: '>= 6'}
@@ -10184,7 +10194,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.14.5
+      follow-redirects: 1.14.5_debug@4.3.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -11115,6 +11125,10 @@ packages:
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
+
+  /tslib/2.1.0:
+    resolution: {integrity: sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==}
+    dev: false
 
   /tslib/2.3.1:
     resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}

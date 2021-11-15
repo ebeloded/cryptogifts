@@ -2,7 +2,7 @@
   "name": "@cryptogifts/ethereum",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "watch": {
     "test": {
       "patterns": [
@@ -33,9 +33,11 @@
     "@ethersproject/abi": "5.5.0",
     "@ethersproject/bytes": "5.5.0",
     "@ethersproject/providers": "5.5.0",
+    "@metamask/detect-provider": "1.2.0",
     "@openzeppelin/contracts": "4.3.3",
     "ethers": "5.5.1",
-    "nanoid": "3.1.30"
+    "nanoid": "3.1.30",
+    "rxjs": "7.4.0"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "2.0.2",

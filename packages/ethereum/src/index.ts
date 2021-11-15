@@ -1,0 +1,1 @@
+export { connectEthereum } from './connectEthereum'

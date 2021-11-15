@@ -38,10 +38,10 @@ const config: HardhatUserConfig = {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
   paths: {
-    sources: 'src',
+    sources: 'contracts',
   },
   typechain: {
-    outDir: 'contracts',
+    outDir: 'contracts-ts',
   },
 }
 
