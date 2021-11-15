@@ -37,6 +37,20 @@
       "label": "dev",
       "dependsOn": ["app:dev", "ethereum:dev"],
       "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "command": "github .",
+      "label": "Github Desktop",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
     }
   ]
 }
