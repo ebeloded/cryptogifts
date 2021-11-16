@@ -1,6 +1,6 @@
 # Cryptogifts 🎁
 
-Send crypto to people without crypto
+Send crypto to people without wallets
 
 ## How does it work
 
