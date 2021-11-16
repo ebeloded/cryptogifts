@@ -8,11 +8,16 @@
         Send crypto to people without wallets
       </h1>
 
-      <a class="btn btn-primary btn-lg px-10" href="/create-gift">
+      <a
+        sveltekit:prefetch
+        class="btn btn-primary btn-lg px-10"
+        href="/create-gift">
         Create a Gift
       </a>
       <p class="mt-5">
-        Got a gift code? <a class="link" href="/redeem-gift">Redeem here</a>
+        Got a gift code? <a sveltekit:prefetch class="link" href="/redeem-gift">
+          Redeem here
+        </a>
       </p>
     </div>
   </div>

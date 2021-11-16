@@ -6,16 +6,16 @@ import {
   FormInputLabel,
   TextInput,
 } from '$lib/elements'
-import { networkStore, providerStore } from '$lib/stores'
-import type { CryptoGifts } from '@cryptogifts/ethereum/contracts'
-import { ethers, Signer, utils } from 'ethers'
+import { CryptoGifts, getFeeData } from '$lib/services/ethereum'
+import { utils } from '@cryptogifts/ethereum'
 import { nanoid } from 'nanoid'
 
 import { onMount } from 'svelte'
 
 export let contract: CryptoGifts
-export let signer: Signer
-
+export let user: any
+export let network: any
+$: console.log({ contract })
 const form = {
   value: '',
   key: '',
@@ -44,15 +44,12 @@ async function addGift() {
   const hashHashKey = utils.keccak256(utils.keccak256(utils.toUtf8Bytes(key)))
   const giftValue = utils.parseEther(String(form.value))
   const value = giftValue.add(requiredGas)
-
-  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } =
-    await signer.getFeeData()
+  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await getFeeData()
   console.log({
     gasPrice: utils.formatEther(gasPrice),
     maxFeePerGas: utils.formatEther(maxFeePerGas),
     maxPriorityFeePerGas: utils.formatEther(maxPriorityFeePerGas),
   })
-
   console.log({
     key,
     hashHashKey,
@@ -60,7 +57,6 @@ async function addGift() {
     giftValue,
     value,
   })
-
   contract
     .putETH(hashHashKey, giftValue, {
       value,
@@ -68,7 +64,6 @@ async function addGift() {
     .then(
       (result) => {
         console.log({ result })
-
         result.wait(1).then(() => {
           console.log('done')
         })
@@ -78,49 +73,30 @@ async function addGift() {
       },
     )
 }
-let balance
-const getBalance = async () => {
-  balance = await signer.getBalance().then(ethers.utils.formatEther)
-}
-onMount(() => {
-  getBalance()
-})
-
-// let selectedGift = []
+const { balance$ } = user
 </script>
 
-<Card>
+<div class="card p-10">
   <form on:submit|preventDefault="{addGift}">
     <fieldset class="space-y-6">
-      <!-- <div>
-        <FormInputLabel>Select Gift Type:</FormInputLabel>
-        <ul class="grid gap-2 my-2">
-          {#each giftTypes as giftType}
-            <li>
-              <Checkbox
-                bind:group="{selectedGift}"
-                disabled="{giftType.value !== 'eth'}"
-                label="{giftType.label}"
-                value="{giftType.value}"
-                name="giftTypes" />
-            </li>
-          {/each}
-        </ul>
-      </div> -->
-
       <div>
-        <TextInput
-          label="Gift Amount"
-          hint="You have {balance} ETH"
-          bind:value="{form.value}"
-          type="number"
-          placeholder="Gift Amount"
-          required />
+        <div class="form-control">
+          <label for="gift-amount" class="label">
+            <span class="label-text">Gift Amount</span>
+          </label>
+          <input
+            id="gift-amount"
+            bind:value="{form.value}"
+            type="number"
+            required
+            placeholder="amount"
+            class="input input-bordered" />
+        </div>
       </div>
       <div>
-        <Button submit block>Add Gift</Button>
+        <button type="submit" class="btn w-full btn-primary">Add Gift</button>
       </div>
     </fieldset>
   </form>
-</Card>
-<p>Network: {JSON.stringify($networkStore, null, 2)}</p>
+</div>
+<p>Network: {JSON.stringify(network, null, 2)}</p>

@@ -1,8 +1,6 @@
 <script lang="ts">
-import { userStore } from '$lib/stores'
-$: address = $userStore?.address
+export let user: any
+const { balance$ } = user
 </script>
 
-<pre>
-  {address}
-</pre>
+<pre>{JSON.stringify(user.address, null, 2)} {$balance$}</pre>

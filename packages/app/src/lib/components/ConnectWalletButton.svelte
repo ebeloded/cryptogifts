@@ -1,11 +1,12 @@
 <script lang="ts">
 import Button from '$lib/elements/Button.svelte'
-import { accountStore } from '$lib/stores'
+import { connectAccount } from '$lib/services/ethereum'
+
 let requestInProgress = false
 const connectWallet = async () => {
   try {
     requestInProgress = true
-    await accountStore.requestAccount()
+    await connectAccount()
   } catch {}
   requestInProgress = false
 }

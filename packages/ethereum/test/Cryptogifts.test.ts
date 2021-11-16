@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { BigNumber, providers, Signer, utils } from 'ethers'
 import { nanoid } from 'nanoid'
-import { CryptoGifts, CryptoGifts__factory } from '../contracts'
+import { CryptoGifts, CryptoGifts__factory } from '../contracts-ts'
 
 const hash = (v: string) => utils.keccak256(utils.toUtf8Bytes(v))
 const hashHash = (v: string) => utils.keccak256(hash(v))

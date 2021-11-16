@@ -8,7 +8,7 @@ async function updateAdressesJSON(
   contract: string,
   address: string,
 ) {
-  const filePath = path.resolve('./contracts/addresses.json')
+  const filePath = path.resolve('./contracts-ts/addresses.json')
   console.log({ network, contract, address, filePath })
   const data = JSON.parse(
     fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '{}',
@@ -18,11 +18,11 @@ async function updateAdressesJSON(
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
 }
 
-// task('deploy', 'Deploys the contracts', async (taskArgs, hre) => {
-//   const { CryptoGifts__factory } = await import('../contracts-ts')
-//   const [signer] = await hre.ethers.getSigners()
+task('deploy', 'Deploys the contracts', async (taskArgs, hre) => {
+  const { CryptoGifts__factory } = await import('../contracts-ts')
+  const [signer] = await hre.ethers.getSigners()
 
-//   const Cryptogift = await new CryptoGifts__factory(signer).deploy()
+  const Cryptogift = await new CryptoGifts__factory(signer).deploy()
 
-//   await updateAdressesJSON(hre.network.name, 'Cryptogift', Cryptogift.address)
-// })
+  await updateAdressesJSON(hre.network.name, 'Cryptogift', Cryptogift.address)
+})

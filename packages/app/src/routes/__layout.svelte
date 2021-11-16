@@ -4,17 +4,9 @@ import '$lib/styles/tailwind.css'
 </script>
 
 <script lang="ts">
-// import { Navbar } from '$lib/components'
-import { connectEthereum } from '@cryptogifts/ethereum'
-const ethereum = connectEthereum()
-const { network$, account$ } = ethereum
-console.log({ ethereum })
+import { Navbar } from '$lib/components'
 </script>
 
-<!-- <Navbar /> -->
-<pre>
+<Navbar />
 
-  network: {JSON.stringify($network$, null, 2)}
-  account: {JSON.stringify($account$, null, 2)}
-</pre>
 <slot />
