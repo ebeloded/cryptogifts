@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "keywords": [],
+  "engines": {
+    "node": "14"
+  },
   "author": "Evgenij (Eugene) Beloded",
   "license": "UNLICENSE",
   "scripts": {
