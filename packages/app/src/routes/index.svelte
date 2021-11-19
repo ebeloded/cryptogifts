@@ -1,6 +1,3 @@
-<script lang="ts">
-</script>
-
 <section class="hero">
   <div class="text-center hero-content">
     <div class="w-2/3">
@@ -11,7 +8,8 @@
       <a
         sveltekit:prefetch
         class="btn btn-primary btn-lg px-10"
-        href="/create-gift">
+        href="/create-gift"
+      >
         Create a Gift
       </a>
       <p class="mt-5">

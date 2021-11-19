@@ -1,83 +1,46 @@
-<script lang="ts">
-import {
-  Button,
-  Card,
-  Checkbox,
-  FormInputLabel,
-  TextInput,
-} from '$lib/elements'
-import { CryptoGifts, getFeeData } from '$lib/services/ethereum'
-import { utils } from '@cryptogifts/ethereum'
-import { nanoid } from 'nanoid'
+<!-- @component
 
-import { onMount } from 'svelte'
+  CreateGift component allows creating gift cards. The user chooses gift type (ETH, ERC20, ERC721), gift amount, and message.
+
+-->
+<script lang="ts">
+import type { CryptoGifts } from '$lib/services/ethereum'
+import { nanoid } from 'nanoid'
 
 export let contract: CryptoGifts
 export let user: any
 export let network: any
-$: console.log({ contract })
+
 const form = {
   value: '',
   key: '',
   network: '',
 }
 
-// const giftTypes = [
-//   {
-//     label: 'ETH',
-//     value: 'eth',
-//   },
-//   {
-//     label: 'Fungible Tokens (ERC-20)',
-//     value: 'erc20',
-//   },
-//   {
-//     label: 'NFTs (ERC-721)',
-//     value: 'erc721',
-//   },
-// ]
+const giftTypes = [
+  {
+    label: 'ETH',
+    value: 'eth',
+  },
+  {
+    label: 'Fungible Tokens (ERC-20)',
+    value: 'erc20',
+  },
+  {
+    label: 'NFTs (ERC-721)',
+    value: 'erc721',
+  },
+]
 
 async function addGift() {
-  console.log('addGift', form)
-  const key = nanoid()
-  const requiredGas = await contract.getRequiredGas()
-  const hashHashKey = utils.keccak256(utils.keccak256(utils.toUtf8Bytes(key)))
-  const giftValue = utils.parseEther(String(form.value))
-  const value = giftValue.add(requiredGas)
-  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await getFeeData()
-  console.log({
-    gasPrice: utils.formatEther(gasPrice),
-    maxFeePerGas: utils.formatEther(maxFeePerGas),
-    maxPriorityFeePerGas: utils.formatEther(maxPriorityFeePerGas),
-  })
-  console.log({
-    key,
-    hashHashKey,
-    requiredGas,
-    giftValue,
-    value,
-  })
-  contract
-    .putETH(hashHashKey, giftValue, {
-      value,
-    })
-    .then(
-      (result) => {
-        console.log({ result })
-        result.wait(1).then(() => {
-          console.log('done')
-        })
-      },
-      (err) => {
-        console.log({ err })
-      },
-    )
+  try {
+  } catch (error) {}
 }
 const { balance$ } = user
 </script>
 
-<div class="card p-10">
-  <form on:submit|preventDefault="{addGift}">
+<div class="card shadow-lg compact side bg-base-200 p-10">
+  <form on:submit|preventDefault={addGift}>
     <fieldset class="space-y-6">
       <div>
         <div class="form-control">
@@ -86,17 +49,31 @@ const { balance$ } = user
           </label>
           <input
             id="gift-amount"
-            bind:value="{form.value}"
+            bind:value={form.value}
             type="number"
             required
             placeholder="amount"
-            class="input input-bordered" />
+            class="input input-lg "
+          />
         </div>
+        <div>{$balance$}</div>
+      </div>
+      <div class="form-control">
+        <label for="gift-message" class="label">
+          <span class="label-text">Personal Message</span>
+        </label>
+        <textarea
+          id="gift-message"
+          class="textarea h-24 textarea-lg "
+          placeholder=""
+        />
       </div>
       <div>
-        <button type="submit" class="btn w-full btn-primary">Add Gift</button>
+        <button type="submit" class="btn w-full btn-primary">
+          Create Gift
+        </button>
       </div>
     </fieldset>
   </form>
+  {JSON.stringify(network, null, 2)}
 </div>
-<p>Network: {JSON.stringify(network, null, 2)}</p>

@@ -2,7 +2,8 @@ import { browser } from '$app/env'
 import { PRIVATE_KEY } from '$lib/env'
 import { connectEthereum } from '@cryptogifts/ethereum'
 export type { CryptoGifts, GiftStruct } from '@cryptogifts/ethereum'
-console.log({ PRIVATE_KEY })
+export { utils } from '@cryptogifts/ethereum'
+
 export const {
   address$,
   block$,

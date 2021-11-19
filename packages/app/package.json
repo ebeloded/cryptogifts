@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "deploy": "firebase deploy --only hosting",
-    "dev": "svelte-kit dev --host 0.0.0.0 --port 4000 --open",
+    "dev": "svelte-kit dev --host 0.0.0.0 --port 1111 --open",
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
@@ -17,11 +17,11 @@
     "autoprefixer": "10.4.0",
     "eip1193-provider": "1.0.1",
     "svelte": "3.44.1",
-    "svelte-check": "^2.2.8",
+    "svelte-check": "^2.2.10",
     "svelte-preprocess": "4.9.8",
     "tailwindcss": "2.2.19",
     "tslib": "2.3.1",
-    "typescript": "4.4.4"
+    "typescript": "4.5.2"
   },
   "type": "module",
   "dependencies": {
@@ -34,6 +34,7 @@
     "clsx": "1.1.1",
     "daisyui": "1.16.2",
     "ethers": "5.5.1",
+    "firebase": "9.5.0",
     "nanoid": "3.1.30",
     "object-call-utils": "1.3.0",
     "ramda": "0.27.1",
