@@ -8,8 +8,8 @@
   "htmlWhitespaceSensitivity": "ignore",
   "quoteProps": "consistent",
   "endOfLine": "auto",
-  "svelteStrictMode": true,
-  "svelteBracketNewLine": false,
+  "svelteStrictMode": false,
+  "svelteAllowShorthand": false,
   "svelteIndentScriptAndStyle": false,
   "plugins": [
     "./node_modules/prettier-plugin-svelte",
