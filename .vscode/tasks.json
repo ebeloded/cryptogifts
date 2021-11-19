@@ -33,6 +33,22 @@
         "group": "dev"
       }
     },
+
+    {
+      "label": "functions:dev",
+      "type": "npm",
+      "script": "functions:dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "none",
+      "runOptions": {
+        "instanceLimit": 1,
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "group": "dev"
+      }
+    },
     {
       "label": "dev",
       "dependsOn": ["app:dev", "ethereum:dev"],
