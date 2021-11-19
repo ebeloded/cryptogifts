@@ -18,6 +18,8 @@ import detectEthereumProvider from '@metamask/detect-provider'
 
 const NoEthereumProviderError = () => new Error('No Ethereum provider found')
 
+type EthereumProvider = import('eip1193-provider').default
+
 const getEthereumProvider = (dev: boolean) =>
   dev
     ? Promise.resolve(new ethers.providers.JsonRpcProvider()).then(
@@ -32,8 +34,8 @@ const getEthereumProvider = (dev: boolean) =>
       }).then((ethereum) => {
         if (!ethereum) throw NoEthereumProviderError
         return {
-          ethereum: ethereum as import('eip1193-provider').default,
-          provider: new ethers.providers.Web3Provider(ethereum, 'any'),
+          ethereum: ethereum as EthereumProvider,
+          provider: new ethers.providers.Web3Provider(ethereum as any, 'any'),
         }
       })
 
