@@ -1,9 +1,13 @@
 export type { CryptoGifts, GiftStruct } from '@cryptogifts/ethereum'
 
 import { browser } from '$app/env'
-import { PRIVATE_KEY } from '$lib/env'
+import { DEV_MODE } from '$lib/env'
+
 import { connectEthereum } from '@cryptogifts/ethereum'
+import { privateKey } from './localStorage'
 export { utils } from '@cryptogifts/ethereum'
+
+const PK = DEV_MODE ? privateKey.get() : void 0
 
 export const {
   address$,
@@ -14,4 +18,4 @@ export const {
   getFeeData,
   changeNetwork,
   connectAccount,
-} = browser ? connectEthereum(PRIVATE_KEY) : ({} as any)
+} = browser ? connectEthereum(PK) : ({} as any)
