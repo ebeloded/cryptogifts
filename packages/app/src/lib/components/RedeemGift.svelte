@@ -1,20 +1,17 @@
 <script lang="ts">
 import { decodeGift } from '$lib/services/cryptogifts'
+import type { RedeemableGift } from '$lib/types'
 
 let code: string
 let gift: any
 let error: any = null
-$: if (code) {
-  try {
-    gift = decodeGift(code)
-    error = null
-  } catch (e) {
-    gift = null
-    error = e
-  }
-}
+
+$: decodeGift(code)
+  .then((g) => (gift = g))
+  .catch((e) => (error = e))
+
 function redeemGift() {
-  const gift = decodeGift(code)
+  console.log({ gift })
 
   // extract key
   // call backend with hash of the key

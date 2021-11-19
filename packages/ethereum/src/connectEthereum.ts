@@ -61,11 +61,11 @@ export function connectEthereum(privateKey?: string) {
 
   const signer$ = ethereumProvider$.pipe(
     map(
-      ({ provider, ethereum }) =>
+      ({ provider }) =>
         () =>
-          ethereum
-            ? provider.getSigner(0)
-            : new ethers.Wallet(privateKey, provider),
+          privateKey
+            ? new ethers.Wallet(privateKey, provider)
+            : provider.getSigner(0),
     ),
   )
 
@@ -92,14 +92,20 @@ export function connectEthereum(privateKey?: string) {
     shareReplay(1),
   )
 
-  const user$ = combineLatest([ethereumProvider$, address$, network$]).pipe(
+  const user$ = combineLatest([
+    ethereumProvider$,
+    address$,
+    network$,
+    signer$,
+  ]).pipe(
     filter(([, address, network]) => address !== void 0 && network !== void 0),
-    switchMap(async ([{ provider }, address, network]) => {
+    switchMap(async ([{ provider }, address, network, signer]) => {
       const getBalance = (addr: string) =>
         provider.getBalance(addr).then(utils.formatEther)
 
       return address && network
         ? {
+            signer: signer(),
             address,
             name: await provider.lookupAddress(address).catch(() => null),
             avatar: '', //TODO: fetch avatar
