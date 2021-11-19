@@ -1,5 +1,5 @@
 export const api = {
-  hello() {
+  async hello() {
     console.log('api world')
     return 'world'
   },
