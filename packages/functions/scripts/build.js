@@ -11,7 +11,7 @@ const buildOptions = {
   incremental: true,
   platform: 'node',
   sourcemap: 'inline',
-  outfile: 'build/index.js',
+  outdir: 'build',
   logLevel: 'info',
   target: 'node14',
   format: 'esm',

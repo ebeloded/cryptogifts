@@ -34,6 +34,7 @@ importers:
       '@walletconnect/web3-provider': 1.6.6
       autoprefixer: 10.4.0
       clsx: 1.1.1
+      copy-to-clipboard: 3.3.1
       daisyui: 1.16.2
       eip1193-provider: 1.0.1
       ethers: 5.5.1
@@ -61,6 +62,7 @@ importers:
       '@walletconnect/qrcode-modal': 1.6.6
       '@walletconnect/web3-provider': 1.6.6
       clsx: 1.1.1
+      copy-to-clipboard: 3.3.1
       daisyui: 1.16.2
       ethers: 5.5.1
       firebase: 9.5.0
@@ -154,14 +156,12 @@ importers:
       esbuild: 0.13.14
       firebase-admin: 10.0.0
       firebase-functions: 3.16.0
-      my-kit-lib: 0.0.3
       object-call-utils: 1.3.0
       typescript: 4.5.2
     dependencies:
       '@cryptogifts/api': link:../api
       firebase-admin: 10.0.0
       firebase-functions: 3.16.0_firebase-admin@10.0.0
-      my-kit-lib: 0.0.3
       object-call-utils: 1.3.0
     devDependencies:
       esbuild: 0.13.14
@@ -8916,10 +8916,6 @@ packages:
   /mute-stream/0.0.7:
     resolution: {integrity: sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=}
     dev: true
-
-  /my-kit-lib/0.0.3:
-    resolution: {integrity: sha512-l+KP0VRvDSV/jggezx47Ub7U5KXoagxCdKPg5OpEyyaGu2OuQeCGL7hWBeuadWRbfAv7urMSbM3yINHcDSBxiQ==}
-    dev: false
 
   /nan/2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}

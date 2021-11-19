@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": true,
-    "outDir": "dist",
-    "declaration": true
+    "rootDir": "..",
+    "strict": false,
+    "noUnusedLocals": false,
+    "emitDeclarationOnly": true
   },
-  "include": ["./scripts", "./test", "./typechain"],
+  "extends": "../../tsconfig.base.json",
+  "include": ["./scripts", "./test", "./contracts-ts", "./tasks"],
   "files": ["./hardhat.config.ts"]
 }

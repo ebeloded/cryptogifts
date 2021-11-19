@@ -18,7 +18,7 @@ async function updateAdressesJSON(
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
 }
 
-task('deploy', 'Deploys the contracts', async (taskArgs, hre) => {
+task('deploy', 'Deploys the contracts', async (_taskArgs, hre) => {
   const { CryptoGifts__factory } = await import('../contracts-ts')
   const [signer] = await hre.ethers.getSigners()
 

@@ -1,7 +1,13 @@
 <script lang="ts">
-import { CreateGift, ConnectWalletButton } from '$lib/components'
+import { CreateGift, ConnectWalletButton, GiftCode } from '$lib/components'
 import { user$, contract$, network$ } from '$lib/services/ethereum'
 import { scale } from 'svelte/transition'
+
+let encodedGift: string
+
+function handleGift(gift: string) {
+  encodedGift = gift
+}
 </script>
 
 <slot />
@@ -13,12 +19,18 @@ import { scale } from 'svelte/transition'
 
   <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
     {#if $user$}
-      <div in:scale="{{ start: 0.9 }}">
-        <CreateGift
-          contract="{$contract$}"
-          user="{$user$}"
-          network="{$network$}" />
-      </div>
+      {#if encodedGift}
+        <GiftCode code={encodedGift} />
+      {:else}
+        <div in:scale={{ start: 0.9 }}>
+          <CreateGift
+            contract={$contract$}
+            user={$user$}
+            network={$network$}
+            on:created={({ detail }) => handleGift(detail)}
+          />
+        </div>
+      {/if}
     {:else if $user$ === null}
       <ConnectWalletButton />
     {:else}

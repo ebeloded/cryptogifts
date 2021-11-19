@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { BigNumber, providers, Signer, utils } from 'ethers'
+import { BigNumber, Signer, utils } from 'ethers'
 import { nanoid } from 'nanoid'
 import { CryptoGifts, CryptoGifts__factory } from '../contracts-ts'
 

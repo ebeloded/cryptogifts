@@ -4,17 +4,20 @@
 
 -->
 <script lang="ts">
+import { createGiftOfETH, encodeGift } from '$lib/services/cryptogifts'
+
 import type { CryptoGifts } from '$lib/services/ethereum'
-import { nanoid } from 'nanoid'
+import { createEventDispatcher } from 'svelte'
 
 export let contract: CryptoGifts
 export let user: any
 export let network: any
 
+const dispatch = createEventDispatcher<{ created: any }>()
+
 const form = {
   value: '',
-  key: '',
-  network: '',
+  message: '',
 }
 
 const giftTypes = [
@@ -34,7 +37,17 @@ const giftTypes = [
 
 async function addGift() {
   try {
-  } catch (error) {}
+    const gift = await createGiftOfETH(
+      contract,
+      network.chainId,
+      form.message,
+      form.value,
+    )
+
+    dispatch('created', encodeGift(gift))
+  } catch (error) {
+    console.log({ error })
+  }
 }
 const { balance$ } = user
 </script>
@@ -50,7 +63,7 @@ const { balance$ } = user
           <input
             id="gift-amount"
             bind:value={form.value}
-            type="number"
+            type="text"
             required
             placeholder="amount"
             class="input input-lg "
@@ -64,7 +77,8 @@ const { balance$ } = user
         </label>
         <textarea
           id="gift-message"
-          class="textarea h-24 textarea-lg "
+          bind:value={form.message}
+          class="textarea h-24 textarea-lg"
           placeholder=""
         />
       </div>

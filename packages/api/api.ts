@@ -1,6 +1,7 @@
 export const api = {
   hello() {
     console.log('api world')
+    return 'world'
   },
 }
 

@@ -1,7 +1,9 @@
-import { RedeemableGift, Chain } from '$lib/types'
-import { CryptoGifts, EthereumNetwork, utils } from '@cryptogifts/ethereum'
+import type { CryptoGifts } from '@cryptogifts/ethereum'
+import type { RedeemableGift } from '$lib/types'
+
+import { Chain } from '$lib/types'
+import { utils } from '@cryptogifts/ethereum'
 import { nanoid } from 'nanoid'
-import { getFeeData } from './ethereum'
 
 export async function createGiftOfETH(
   contract: CryptoGifts,
@@ -10,9 +12,6 @@ export async function createGiftOfETH(
   giftValueEth: string,
 ): Promise<RedeemableGift> {
   const key = nanoid()
-
-  // const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await getFeeData()
-
   const requiredGas = await contract.getRequiredGas()
   const hashHashKey = utils.keccak256(utils.keccak256(utils.toUtf8Bytes(key)))
   const giftValue = utils.parseEther(giftValueEth)
@@ -26,18 +25,20 @@ export async function createGiftOfETH(
 
   return {
     c: Chain.ethereum,
-    n: EthereumNetwork.mainnet,
+    n: network,
     k: key,
     m: message,
   }
 }
 
+export async function redeemGiftOfETH(contract: CryptoGifts) {}
+
 export function encodeGift(gift: RedeemableGift): string {
-  return JSON.stringify(gift)
+  return window.btoa(JSON.stringify(gift))
 }
 
 export function decodeGift(giftEncoded: string): RedeemableGift {
-  return JSON.parse(giftEncoded)
+  return JSON.parse(window.atob(giftEncoded))
 }
 
 export function requestTransactionsFee() {
