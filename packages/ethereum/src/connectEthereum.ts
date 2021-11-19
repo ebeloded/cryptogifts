@@ -9,27 +9,21 @@ import {
   map,
   concat,
   tap,
-  Observable,
-  mapTo,
-  withLatestFrom,
   combineLatest,
   distinctUntilChanged,
   defer,
-  switchMapTo,
-  iif,
-  EMPTY,
+  filter,
 } from 'rxjs'
 import detectEthereumProvider from '@metamask/detect-provider'
 
 const NoEthereumProviderError = () => new Error('No Ethereum provider found')
 
-const getEthereumProvider = (privateKey?: string) =>
-  privateKey
+const getEthereumProvider = (dev: boolean) =>
+  dev
     ? Promise.resolve(new ethers.providers.JsonRpcProvider()).then(
         (provider) => ({
           ethereum: null,
           provider,
-          getSigner: () => new ethers.Wallet(privateKey, provider),
         }),
       )
     : detectEthereumProvider({
@@ -37,12 +31,9 @@ const getEthereumProvider = (privateKey?: string) =>
         timeout: 1000,
       }).then((ethereum) => {
         if (!ethereum) throw NoEthereumProviderError
-        console.log('using Web3Provider')
-        const provider = new ethers.providers.Web3Provider(ethereum, 'any')
         return {
           ethereum: ethereum as import('eip1193-provider').default,
-          provider,
-          getSigner: () => provider.getSigner(0),
+          provider: new ethers.providers.Web3Provider(ethereum, 'any'),
         }
       })
 
@@ -51,8 +42,8 @@ const getContractAddress = () =>
     (addresses) => addresses.localhost.Cryptogift,
   )
 
-export function connectEthereum(PK?: string) {
-  const ethereumProviderPromise = getEthereumProvider(PK)
+export function connectEthereum(privateKey?: string) {
+  const ethereumProviderPromise = getEthereumProvider(!!privateKey)
 
   const ethereumProvider$ = from(ethereumProviderPromise).pipe(
     tap((v) => console.log('ethereumProvider$', v)),
@@ -68,6 +59,16 @@ export function connectEthereum(PK?: string) {
     shareReplay(1),
   )
 
+  const signer$ = ethereumProvider$.pipe(
+    map(
+      ({ provider, ethereum }) =>
+        () =>
+          ethereum
+            ? provider.getSigner(0)
+            : new ethers.Wallet(privateKey, provider),
+    ),
+  )
+
   const block$ = combineLatest([ethereumProvider$, network$]).pipe(
     switchMap(([{ provider }]) =>
       concat(provider.getBlockNumber(), fromEvent(provider, 'block')),
@@ -76,18 +77,14 @@ export function connectEthereum(PK?: string) {
     tap((v) => console.log('blockUpdate$', v)),
   )
 
-  const address$ = ethereumProvider$.pipe(
-    switchMap(({ ethereum, provider, getSigner }) =>
+  const address$ = combineLatest([ethereumProvider$, signer$]).pipe(
+    switchMap(([{ ethereum, provider }, signer]) =>
       ethereum
         ? concat(
-            from(provider.send('eth_accounts', [])).pipe(
-              tap((v) => console.log('accounts', v)),
-            ),
+            from(provider.send('eth_accounts', [])),
             fromEvent(ethereum, 'accountsChanged'),
           ).pipe(map(([address]) => address || null))
-        : from(getSigner().getAddress()).pipe(
-            tap((v) => console.log('address', v)),
-          ),
+        : from(signer().getAddress()),
     ),
     distinctUntilChanged(),
     startWith(void 0),
@@ -96,6 +93,7 @@ export function connectEthereum(PK?: string) {
   )
 
   const user$ = combineLatest([ethereumProvider$, address$, network$]).pipe(
+    filter(([, address, network]) => address !== void 0 && network !== void 0),
     switchMap(async ([{ provider }, address, network]) => {
       const getBalance = (addr: string) =>
         provider.getBalance(addr).then(utils.formatEther)
@@ -116,9 +114,6 @@ export function connectEthereum(PK?: string) {
                 provider.getBalance(address).then(utils.formatEther),
               ),
               distinctUntilChanged(),
-              tap((balance) => {
-                console.log('balance$', balance)
-              }),
               shareReplay(1),
             ),
           }
@@ -129,22 +124,25 @@ export function connectEthereum(PK?: string) {
     shareReplay(1),
   )
 
-  const signer$ = combineLatest([ethereumProvider$, address$, network$]).pipe(
-    map(([{ getSigner, provider }], address) =>
-      address ? getSigner() : provider,
-    ),
-    tap((v) => console.log('signer$', v)),
+  const contractSigner$ = combineLatest([
+    ethereumProvider$,
+    address$,
+    signer$,
+    network$,
+  ]).pipe(
+    map(([{ provider }, address, signer]) => (address ? signer() : provider)),
     shareReplay(1),
   )
 
-  const contract$ = signer$.pipe(
-    withLatestFrom(defer(getContractAddress)),
-    switchMap(([signer, address]) =>
+  const contract$ = combineLatest([
+    defer(getContractAddress),
+    contractSigner$,
+  ]).pipe(
+    switchMap(([contractAddress, contractSigner]) =>
       import('../contracts-ts').then(({ CryptoGifts__factory }) =>
-        CryptoGifts__factory.connect(address, signer),
+        CryptoGifts__factory.connect(contractAddress, contractSigner),
       ),
     ),
-    tap((v) => console.log('contract$', v)),
   )
 
   const connectAccount = () =>
@@ -155,7 +153,9 @@ export function connectEthereum(PK?: string) {
   const getFeeData = () =>
     ethereumProviderPromise.then(({ provider }) => provider.getFeeData())
 
-  const changeNetwork = () => {}
+  const changeNetwork = () => {
+    throw new Error('Not implemented')
+  }
 
   return {
     network$,
