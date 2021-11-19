@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "baseUrl": "./packages",
+    "rootDir": "."
+  },
+  "references": [
+    { "path": "packages/app" },
+    { "path": "packages/api" },
+    { "path": "packages/ethereum" },
+    { "path": "packages/functions" }
+  ],
+  "files": []
+}
