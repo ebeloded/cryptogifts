@@ -4,9 +4,15 @@ import '$lib/styles/tailwind.css'
 </script>
 
 <script lang="ts">
-import { Navbar } from '$lib/components'
+import { Navbar, DevPanel } from '$lib/components'
+import { DEV_MODE } from '$lib/env'
+import { browser } from '$app/env'
 </script>
 
 <Navbar />
 
 <slot />
+
+{#if DEV_MODE && browser}
+  <DevPanel />
+{/if}
