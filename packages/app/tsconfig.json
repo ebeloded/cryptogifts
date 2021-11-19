@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "module": "es2020",
     "lib": ["es2020", "DOM"],
     /**
 			svelte-preprocess cannot figure out whether you have a value or a type, so tell TypeScript
@@ -8,19 +7,8 @@
 			*/
     "importsNotUsedAsValues": "error",
     "isolatedModules": true,
-    "resolveJsonModule": true,
-    /**
-			To have warnings/errors of the Svelte compiler at the correct position,
-			enable source maps by default.
-			*/
-    "sourceMap": true,
-    "esModuleInterop": true,
     "noUnusedLocals": false,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "allowJs": true,
-    "checkJs": true,
     "paths": {
       "svelte/transition": ["./node_modules/svelte/transition"],
       "svelte/store": ["./node_modules/svelte/store"],
@@ -28,10 +16,9 @@
       "$lib/*": ["src/lib/*"],
       "@cryptogifts/api": ["../api"]
     },
-    "rootDir": "..",
-    "emitDeclarationOnly": true
+    "rootDir": ".."
   },
-  "references": [{ "path": "../api" }],
+  "references": [{ "path": "../api" }, { "path": "../ethereum" }],
   "extends": "../../tsconfig.base.json",
   "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"]
 }
