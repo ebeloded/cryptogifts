@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es2020",
+    "module": "ES2020",
+    "lib": ["es2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDeclarationOnly": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "checkJs": true,
+    "outDir": "build",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
+    "noEmitOnError": true
+  }
+}
