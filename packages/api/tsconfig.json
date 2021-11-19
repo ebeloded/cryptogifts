@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "rootDir": "..",
+    "emitDeclarationOnly": true
+  },
+
+  "extends": "../../tsconfig.base.json"
+}
