@@ -20,6 +20,12 @@ importers:
       prettier-plugin-svelte: 2.4.0_prettier@2.4.1
       typescript: 4.4.4
 
+  packages/api:
+    specifiers:
+      ethers: 5.5.1
+    dependencies:
+      ethers: 5.5.1
+
   packages/app:
     specifiers:
       '@alch/alchemy-web3': 1.1.7
