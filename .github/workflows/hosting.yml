@@ -1,4 +1,4 @@
-name: Private Log
+name: Hosting
 on:
   workflow_dispatch:
 
