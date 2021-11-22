@@ -1,10 +1,9 @@
 {
   "functions": {
-    "predeploy": "npm --prefix \"$RESOURCE_DIR\" run build",
+    "predeploy": ["cd \"$RESOURCE_DIR\" && npx remove-workspace-deps"],
     "source": "packages/functions",
     "ignore": ["**/.*", "**/node_modules/**"]
   },
-
   "hosting": {
     "public": "packages/app/build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
