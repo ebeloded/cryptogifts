@@ -108,7 +108,6 @@ contract CryptoGifts is Ownable {
   function get(bytes calldata _hashHashKey)
     external
     view
-    onlyOwner
     returns (Gift memory gift)
   {
     return gifts[_hashHashKey];
