@@ -1,0 +1,37 @@
+name: Private Log
+on:
+  workflow_dispatch:
+
+  push:
+    paths:
+      - src/packages/app/**
+      - src/packages/ethereum/**
+      - ./.github/workflows/hosting.yml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-node-pnpm-cache
+      - run: pnpm build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: app
+          path: |
+            packages/app/build
+            firebase.json
+            .firebaserc
+  deploy:
+    needs: build
+    if: ((github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && !startsWith(github.head_ref,'renovate')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: app
+      - run: pnpm app:deploy

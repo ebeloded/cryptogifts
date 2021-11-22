@@ -1,0 +1,22 @@
+name: Functions
+on:
+  workflow_dispatch:
+
+  push:
+    paths:
+      - src/packages/functions/**
+      - src/packages/api/**
+      - ./.github/workflows/functions.yml
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-node-pnpm-cache
+      - run: pnpm functions:build
+      - if: ((github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && !startsWith(github.head_ref,'renovate')))
+        run: pnpm functions:deploy

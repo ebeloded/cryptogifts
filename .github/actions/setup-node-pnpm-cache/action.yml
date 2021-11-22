@@ -1,0 +1,21 @@
+name: setup-node-pnpm-cache
+description: Composite action to setup Node with pnpm and cache node_modules
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 14
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.pnpm-store
+          **/node_modules
+        key: cryptogifts-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: cryptogifts-
+    - uses: pnpm/action-setup@v2.0.1
+      with:
+        version: 6.22.2
+    - run: pnpm install
+      shell: bash
