@@ -1,5 +1,6 @@
 {
   "name": "@cryptogifts/functions",
+  "version": "0.0.1",
   "scripts": {
     "build": "tsc && ./scripts/build.js",
     "build:watch": "./scripts/build.js --watch",
@@ -8,7 +9,7 @@
     "dev": "run-p build:watch emulator",
     "emulator": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "firebase deploy --only functions --force",
     "logs": "firebase functions:log"
   },
   "engines": {
