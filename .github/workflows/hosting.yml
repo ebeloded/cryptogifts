@@ -4,9 +4,9 @@ on:
 
   push:
     paths:
-      - src/packages/app/**
-      - src/packages/ethereum/**
-      - ./.github/workflows/hosting.yml
+      - packages/app/**
+      - packages/ethereum/**
+      - .github/workflows/hosting.yml
 
 jobs:
   build:

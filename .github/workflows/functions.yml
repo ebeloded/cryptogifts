@@ -4,9 +4,9 @@ on:
 
   push:
     paths:
-      - src/packages/functions/**
-      - src/packages/api/**
-      - ./.github/workflows/functions.yml
+      - packages/functions/**
+      - packages/api/**
+      - .github/workflows/functions.yml
 
 jobs:
   build-deploy:
