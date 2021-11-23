@@ -34,10 +34,17 @@ Asset types:
 
 Layer 1:
 
-- [ ] Ethereum Mainnet
+Testnets:
+
 - [ ] Rinkeby
 - [ ] Ropsten
 - [ ] Kovan
+- [ ] Avalanche FUJI testnet
+
+Mainnets:
+
+- [ ] Ethereum Mainnet
+- [ ] Avalanche Mainnet
 
 Layer 2:
 
