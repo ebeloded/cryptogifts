@@ -1,3 +1,5 @@
+[![Functions](https://github.com/ebeloded/cryptogifts/actions/workflows/functions.yml/badge.svg)](https://github.com/ebeloded/cryptogifts/actions/workflows/functions.yml) [![Hosting](https://github.com/ebeloded/cryptogifts/actions/workflows/hosting.yml/badge.svg)](https://github.com/ebeloded/cryptogifts/actions/workflows/hosting.yml)
+
 # Cryptogifts 🎁
 
 Send crypto to people without wallets
