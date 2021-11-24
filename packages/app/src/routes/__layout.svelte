@@ -9,10 +9,14 @@ import { DEV_MODE } from '$lib/env'
 import { browser } from '$app/env'
 </script>
 
-<Navbar />
+<div class="">
+  <Navbar />
+  <slot />
 
-<slot />
+  {#if DEV_MODE && browser}
+    <DevPanel />
+  {/if}
+</div>
 
-{#if DEV_MODE && browser}
-  <DevPanel />
-{/if}
+<style global>
+</style>

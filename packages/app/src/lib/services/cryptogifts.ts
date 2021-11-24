@@ -33,6 +33,7 @@ export async function createGiftOfETH(
 
 export async function redeemGiftOfETH(gift: RedeemableGift) {
   // create key hash
+  console.log({ gift })
   // send it to functions
 }
 
@@ -40,13 +41,8 @@ export function encodeGift(gift: RedeemableGift): string {
   return window.btoa(JSON.stringify(gift))
 }
 
-export async function decodeGift(giftEncoded: string): Promise<RedeemableGift> {
-  try {
-    const gift = JSON.parse(window.atob(giftEncoded))
-    return gift
-  } catch (error) {
-    throw new Error('Invalid gift')
-  }
+export function decodeGift(giftEncoded: string): RedeemableGift {
+  return JSON.parse(window.atob(giftEncoded))
 }
 
 export function requestTransactionsFee() {

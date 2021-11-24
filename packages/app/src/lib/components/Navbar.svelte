@@ -3,7 +3,7 @@ import { ConnectWalletButton, UserInfo } from '.'
 import { user$, address$ } from '$lib/services/ethereum'
 </script>
 
-<header class="navbar">
+<header class="navbar fixed inset-x-0 top-0 h-16">
   <div class="flex-none px-2 mx-2">
     <a href="/" class="text-lg font-bold">🎁 Crypto Gifts</a>
   </div>
@@ -18,7 +18,7 @@ import { user$, address$ } from '$lib/services/ethereum'
   <div class="flex-none">
     {#if $address$}
       {#if $user$}
-        <UserInfo user="{$user$}" />
+        <UserInfo user={$user$} />
       {/if}
     {:else if $address$ === null}
       <ConnectWalletButton>Connect Wallet</ConnectWalletButton>

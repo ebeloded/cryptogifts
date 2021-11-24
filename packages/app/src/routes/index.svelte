@@ -1,4 +1,4 @@
-<section class="hero">
+<section class="hero h-screen">
   <div class="text-center hero-content">
     <div class="w-2/3">
       <h1 class="mb-5 text-6xl font-bold leading-normal">
@@ -8,12 +8,16 @@
       <a
         sveltekit:prefetch
         class="btn btn-primary btn-lg px-10"
-        href="/create-gift"
+        href="/gifts/create"
       >
         Create a Gift
       </a>
       <p class="mt-5">
-        Got a gift code? <a sveltekit:prefetch class="link" href="/redeem-gift">
+        Got a gift code? <a
+          sveltekit:prefetch
+          class="link"
+          href="/gifts/redeem"
+        >
           Redeem here
         </a>
       </p>
@@ -31,3 +35,6 @@
 <section id="roadmap">Roadmap</section>
 <section id="under-the-hood">Under the hood</section> -->
 <slot />
+
+<style>
+</style>

@@ -4,6 +4,23 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import { ethers } from 'hardhat'
+import fs from 'fs'
+import path from 'path'
+
+async function updateAdressesJSON(
+  network: string,
+  contract: string,
+  address: string,
+) {
+  const filePath = path.resolve('./contracts-ts/addresses.json')
+  console.log({ network, contract, address, filePath })
+  const data = JSON.parse(
+    fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '{}',
+  )
+  data[network] = data[network] || {}
+  data[network][contract] = address
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+}
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command

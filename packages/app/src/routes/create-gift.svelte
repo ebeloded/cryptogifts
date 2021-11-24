@@ -1,3 +1,14 @@
+<script lang="ts" context="module">
+import type { Load } from '@sveltejs/kit'
+
+const wait = (t: number) => new Promise((resolve) => setTimeout(resolve, t))
+
+export const load: Load = async () => {
+  await wait(3000)
+  return {}
+}
+</script>
+
 <script lang="ts">
 import { CreateGift, ConnectWalletButton, GiftCode } from '$lib/components'
 import { user$, contract$, network$ } from '$lib/services/ethereum'

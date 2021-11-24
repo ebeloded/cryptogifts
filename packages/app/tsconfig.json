@@ -14,6 +14,10 @@
       "svelte/store": ["./node_modules/svelte/store"],
       "$lib": ["src/lib"],
       "$lib/*": ["src/lib/*"],
+      "$components": ["src/components"],
+      "$components/*": ["src/components/*"],
+      "$services": ["src/services"],
+      "$services/*": ["src/services/*"],
       "@cryptogifts/api": ["../api"]
     },
     "rootDir": ".."

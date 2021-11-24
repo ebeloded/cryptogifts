@@ -1,9 +1,12 @@
 type RequestFeeForTransaction = {
   keyHash: string
+  signedMessage: string
 }
 
 export async function requestFeeForTransaction({
   keyHash,
+  signedMessage,
 }: RequestFeeForTransaction) {
-  console.log({ keyHash })
+  // get gift, check if already redeemed
+  console.log({ keyHash, signedMessage })
 }
