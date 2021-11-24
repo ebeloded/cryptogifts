@@ -5,7 +5,11 @@
 
 -->
 <script lang="ts">
+import { CreateGiftForm } from '$components'
+
 import { network$ } from '$lib/services/ethereum'
 </script>
 
-<CreateGiftForm network={$network$} on:submit={createGift} />
+<div class="min-h-screen flex justify-center items-center">
+  <CreateGiftForm />
+</div>
