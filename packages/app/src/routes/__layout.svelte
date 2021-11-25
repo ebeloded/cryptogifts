@@ -4,7 +4,7 @@ import '$lib/styles/tailwind.css'
 </script>
 
 <script lang="ts">
-import { Navbar, DevPanel } from '$lib/components'
+import { Navbar, DevPanel } from '$components'
 import { DEV_MODE } from '$lib/env'
 import { browser } from '$app/env'
 </script>
@@ -17,6 +17,3 @@ import { browser } from '$app/env'
     <DevPanel />
   {/if}
 </div>
-
-<style global>
-</style>

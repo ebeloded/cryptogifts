@@ -1,13 +1,13 @@
-import type { EthereumNetwork } from '@cryptogifts/ethereum'
+import type { Chain } from '@cryptogifts/ethereum'
 
-export enum Chain {
+export enum Network {
   ethereum = 'ETH',
   solana = 'SOL',
 }
 
 export interface RedeemableGiftEthereum {
-  c: Chain.ethereum
-  n: EthereumNetwork
+  n: Network.ethereum
+  c: Chain
   k: string // gift key
   m: string // message
 }

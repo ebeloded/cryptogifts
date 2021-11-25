@@ -13,12 +13,15 @@ import {
   distinctUntilChanged,
   defer,
   filter,
+  of,
 } from 'rxjs'
+import type { ChainInfo } from './types'
+
 import detectEthereumProvider from '@metamask/detect-provider'
 
-const NoEthereumProviderError = () => new Error('No Ethereum provider found')
-
 type EthereumProvider = import('eip1193-provider').default
+
+const NoEthereumProviderError = () => new Error('No Ethereum provider found')
 
 const getEthereumProvider = (dev: boolean) =>
   dev
@@ -32,7 +35,7 @@ const getEthereumProvider = (dev: boolean) =>
         silent: true,
         timeout: 1000,
       }).then((ethereum) => {
-        if (!ethereum) throw NoEthereumProviderError
+        if (!ethereum) return { ethereum: null, provider: null }
         return {
           ethereum: ethereum as EthereumProvider,
           provider: new ethers.providers.Web3Provider(ethereum as any, 'any'),
@@ -54,7 +57,12 @@ export function connectEthereum(privateKey?: string) {
 
   const network$ = ethereumProvider$.pipe(
     switchMap(({ provider }) =>
-      concat(provider.getNetwork(), fromEvent(provider, 'network', identity)),
+      provider
+        ? concat(
+            provider.getNetwork(),
+            fromEvent(provider, 'network', identity),
+          )
+        : of(null),
     ),
     tap((v) => console.log('network$', v)),
     startWith(void 0),
@@ -62,18 +70,21 @@ export function connectEthereum(privateKey?: string) {
   )
 
   const signer$ = ethereumProvider$.pipe(
-    map(
-      ({ provider }) =>
-        () =>
-          privateKey
-            ? new ethers.Wallet(privateKey, provider)
-            : provider.getSigner(0),
+    map(({ provider }) =>
+      provider
+        ? () =>
+            privateKey
+              ? new ethers.Wallet(privateKey, provider)
+              : provider.getSigner(0)
+        : null,
     ),
   )
 
   const block$ = combineLatest([ethereumProvider$, network$]).pipe(
     switchMap(([{ provider }]) =>
-      concat(provider.getBlockNumber(), fromEvent(provider, 'block')),
+      provider
+        ? concat(provider.getBlockNumber(), fromEvent(provider, 'block'))
+        : of(null),
     ),
     startWith(void 0),
     tap((v) => console.log('blockUpdate$', v)),
@@ -81,12 +92,16 @@ export function connectEthereum(privateKey?: string) {
 
   const address$ = combineLatest([ethereumProvider$, signer$]).pipe(
     switchMap(([{ ethereum, provider }, signer]) =>
-      ethereum
-        ? concat(
-            from(provider.send('eth_accounts', [])),
-            fromEvent(ethereum, 'accountsChanged'),
-          ).pipe(map(([address]) => address || null))
-        : from(signer().getAddress()),
+      provider
+        ? ethereum
+          ? concat(
+              from(provider.send('eth_accounts', [])),
+              fromEvent(ethereum, 'accountsChanged'),
+            ).pipe(map(([address]) => address || null))
+          : signer
+          ? from(signer().getAddress())
+          : of(null)
+        : of(null),
     ),
     distinctUntilChanged(),
     startWith(void 0),
@@ -102,30 +117,36 @@ export function connectEthereum(privateKey?: string) {
   ]).pipe(
     filter(([, address, network]) => address !== void 0 && network !== void 0),
     switchMap(async ([{ provider }, address, network, signer]) => {
-      const getBalance = (addr: string) =>
-        provider.getBalance(addr).then(utils.formatEther)
+      if (provider && signer) {
+        const getBalance = (addr: string) =>
+          provider.getBalance(addr).then(utils.formatEther)
 
-      return address && network
-        ? {
-            signer: signer(),
-            address,
-            name: await provider.lookupAddress(address).catch(() => null),
-            avatar: '', //TODO: fetch avatar
-            getBalance,
-            balance$: combineLatest([
-              ethereumProvider$,
-              address$,
-              network$,
-              block$,
-            ]).pipe(
-              switchMap(([{ provider }, address]) =>
-                provider.getBalance(address).then(utils.formatEther),
+        return address && network
+          ? {
+              signer: signer(),
+              address,
+              name: await provider.lookupAddress(address).catch(() => null),
+              avatar: '', //TODO: fetch avatar
+              getBalance,
+              balance$: combineLatest([
+                ethereumProvider$,
+                address$,
+                network$,
+                block$,
+              ]).pipe(
+                switchMap(([{ provider }, address]) =>
+                  provider
+                    ? provider.getBalance(address).then(utils.formatEther)
+                    : of(null),
+                ),
+                distinctUntilChanged(),
+                shareReplay(1),
               ),
-              distinctUntilChanged(),
-              shareReplay(1),
-            ),
-          }
-        : null
+            }
+          : null
+      } else {
+        return null
+      }
     }),
     startWith(void 0),
     tap((v) => console.log('user$', v)),
@@ -138,7 +159,9 @@ export function connectEthereum(privateKey?: string) {
     signer$,
     network$,
   ]).pipe(
-    map(([{ provider }, address, signer]) => (address ? signer() : provider)),
+    map(([{ provider }, address, signer]) =>
+      address && signer ? signer() : provider!,
+    ),
     shareReplay(1),
   )
 
@@ -155,14 +178,51 @@ export function connectEthereum(privateKey?: string) {
 
   const connectAccount = () =>
     ethereumProviderPromise.then(({ provider }) =>
-      provider.send('eth_requestAccounts', []),
+      provider!.send('eth_requestAccounts', []),
     )
 
   const getFeeData = () =>
-    ethereumProviderPromise.then(({ provider }) => provider.getFeeData())
+    ethereumProviderPromise.then(({ provider }) =>
+      provider ? provider.getFeeData() : null,
+    )
 
-  const changeNetwork = () => {
-    throw new Error('Not implemented')
+  interface AddEthereumChainParameter {
+    chainId: string
+    blockExplorerUrls?: string[]
+    chainName?: string
+    iconUrls?: string[]
+    nativeCurrency?: {
+      name: string
+      symbol: string
+      decimals: number
+    }
+    rpcUrls?: string[]
+  }
+  const changeNetwork = (chainInfo: AddEthereumChainParameter) => {
+    console.log('changeNetwork', { chainInfo })
+    ethereumProviderPromise.then(({ ethereum }) => {
+      if (!ethereum) throw NoEthereumProviderError()
+
+      return ethereum
+        .request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: chainInfo.chainId }],
+        })
+        .then(
+          () => {
+            console.log('switched!')
+          },
+          (switchError) => {
+            console.log({ switchError })
+            if (switchError.code === 4902) {
+              return ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [chainInfo],
+              })
+            }
+          },
+        )
+    })
   }
 
   return {

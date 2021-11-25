@@ -1,13 +1,13 @@
 import type { CryptoGifts } from '@cryptogifts/ethereum'
 import type { RedeemableGift } from '$lib/types'
 
-import { Chain } from '$lib/types'
+import { Network } from '$lib/types'
 import { utils } from '@cryptogifts/ethereum'
 import { nanoid } from 'nanoid'
 
 export async function createGiftOfETH(
   contract: CryptoGifts,
-  network: number,
+  chainId: number,
   message: string,
   giftValueEth: string,
 ): Promise<RedeemableGift> {
@@ -24,8 +24,8 @@ export async function createGiftOfETH(
   await putEthTransaction.wait(1)
 
   return {
-    c: Chain.ethereum,
-    n: network,
+    n: Network.ethereum,
+    c: chainId,
     k: key,
     m: message,
   }
@@ -37,11 +37,13 @@ export async function redeemGiftOfETH(gift: RedeemableGift) {
   // send it to functions
 }
 
-export function encodeGift(gift: RedeemableGift): string {
+export async function encodeGift(gift: RedeemableGift): Promise<string> {
   return window.btoa(JSON.stringify(gift))
 }
 
-export function decodeGift(giftEncoded: string): RedeemableGift {
+export async function decodeGiftCode(
+  giftEncoded: string,
+): Promise<RedeemableGift> {
   return JSON.parse(window.atob(giftEncoded))
 }
 

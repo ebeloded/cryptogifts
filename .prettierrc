@@ -11,6 +11,7 @@
   "svelteStrictMode": false,
   "svelteAllowShorthand": false,
   "svelteIndentScriptAndStyle": false,
+  "svelteBracketNewLine": true,
   "plugins": [
     "./node_modules/prettier-plugin-svelte",
     "./node_modules/prettier-plugin-solidity"

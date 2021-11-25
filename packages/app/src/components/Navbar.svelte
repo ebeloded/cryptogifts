@@ -1,6 +1,6 @@
 <script lang="ts">
-import { ConnectWalletButton, UserInfo } from '.'
-import { user$, address$ } from '$lib/services/ethereum'
+import { ConnectWalletButton, UserInfo, GetWalletButton } from '.'
+import { user$, address$, network$ } from '$lib/services/ethereum'
 </script>
 
 <div class="h-16">
@@ -17,14 +17,18 @@ import { user$, address$ } from '$lib/services/ethereum'
       </div>
     </div>
     <div class="flex-none">
-      {#if $address$}
-        {#if $user$}
-          <UserInfo user={$user$} />
+      {#if $network$}
+        {#if $address$}
+          {#if $user$}
+            <UserInfo user={$user$} />
+          {/if}
+        {:else if $address$ === null}
+          <ConnectWalletButton>Connect Wallet</ConnectWalletButton>
+        {:else}
+          Loading...
         {/if}
-      {:else if $address$ === null}
-        <ConnectWalletButton>Connect Wallet</ConnectWalletButton>
-      {:else}
-        Loading...
+      {:else if $network$ === null}
+        <GetWalletButton>Install Metamask</GetWalletButton>
       {/if}
     </div>
   </header>

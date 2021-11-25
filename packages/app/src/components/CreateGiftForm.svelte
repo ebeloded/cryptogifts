@@ -26,8 +26,9 @@ async function addGift() {
       form.message,
       form.value,
     )
+    const giftCode = await encodeGift(gift)
 
-    dispatch('created', encodeGift(gift))
+    dispatch('created', giftCode)
   } catch (error) {
     console.log({ error })
   }

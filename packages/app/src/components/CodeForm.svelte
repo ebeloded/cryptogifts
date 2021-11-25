@@ -1,5 +1,5 @@
 <script lang="ts">
-import { decodeGift } from '$lib/services/cryptogifts'
+import { decodeGiftCode } from '$lib/services/cryptogifts'
 import { createEventDispatcher } from 'svelte'
 const dispatch = createEventDispatcher<{ submit: any }>()
 
@@ -7,24 +7,22 @@ let code: string
 let gift: any = null
 let error: string | null = null
 
-$: try {
-  gift = code ? decodeGift(code) : null
-  error = null
-} catch (e) {
+$: if (code) {
+  decodeGiftCode(code).then(
+    (g) => (gift = g),
+    () => (error = 'Incorrect code format'),
+  )
+} else {
   gift = null
-  error = 'Bad Code'
+  error = null
 }
 
-const formatMessage = (s: string) => {
-  return s.replace(/\n/g, '<br />')
-}
+// const formatMessage = (s: string) => {
+//   return s.replace(/\n/g, '<br />')
+// }
 
 function redeemGift() {
-  console.log({ gift })
-  dispatch('submit', gift)
-  // extract key
-  // call backend with hash of the key
-  // if success, show success message
+  dispatch('submit', code)
 }
 </script>
 
@@ -38,10 +36,8 @@ function redeemGift() {
           class="textarea select-all w-full h-24 textarea-lg"
         />
       </div>
-      {#if gift}
-        <div>{@html formatMessage(gift.m)}</div>
-      {:else if error}
-        <pre>Error: {error}</pre>
+      {#if error}
+        {error}
       {/if}
 
       <div>
