@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { BigNumber, Signer, utils } from 'ethers'
 import { nanoid } from 'nanoid'
-import { CryptoGifts, CryptoGifts__factory } from '../contracts-ts'
+import { Cryptogifts, Cryptogifts__factory } from '../contracts-ts'
 
 const hash = (v: string) => utils.keccak256(utils.toUtf8Bytes(v))
 const hashHash = (v: string) => utils.keccak256(hash(v))
@@ -20,10 +20,10 @@ enum GiftStatus {
 }
 
 describe('Cryptogifts', async () => {
-  let contractFactory: CryptoGifts__factory
-  let contract: CryptoGifts
-  let contract_giver: CryptoGifts
-  let contract_owner: CryptoGifts
+  let contractFactory: Cryptogifts__factory
+  let contract: Cryptogifts
+  let contract_giver: Cryptogifts
+  let contract_owner: Cryptogifts
   let ownerAddr: Signer
   let giverAddr: Signer
   let receiverAddr: Signer
@@ -32,8 +32,8 @@ describe('Cryptogifts', async () => {
     ;[ownerAddr, giverAddr, receiverAddr] = await ethers.getSigners()
 
     contractFactory = (await ethers.getContractFactory(
-      'CryptoGifts',
-    )) as CryptoGifts__factory
+      'Cryptogifts',
+    )) as Cryptogifts__factory
 
     contract = await contractFactory.deploy()
   })

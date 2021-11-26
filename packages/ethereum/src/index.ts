@@ -1,5 +1,5 @@
-export type { CryptoGifts } from '../contracts-ts'
-export type { GiftStruct } from '../contracts-ts/CryptoGifts'
+export type { Cryptogifts } from '../contracts-ts'
+export type { GiftStruct } from '../contracts-ts/Cryptogifts'
 export { utils, BigNumber } from 'ethers'
 export * from './enums'
 export * from './types'

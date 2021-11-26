@@ -27,7 +27,7 @@ struct Gift {
   // bool notifySender;
 }
 
-contract CryptoGifts is Ownable {
+contract Cryptogifts is Ownable {
   mapping(bytes => Gift) private gifts;
   mapping(address => bytes[]) private giftsBySender;
 

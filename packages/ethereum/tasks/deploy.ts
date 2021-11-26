@@ -2,6 +2,7 @@ import '@nomiclabs/hardhat-waffle'
 import { task } from 'hardhat/config'
 import fs from 'fs'
 import path from 'path'
+import { utils } from 'ethers'
 
 async function updateAdressesJSON(
   network: string,
@@ -18,6 +19,19 @@ async function updateAdressesJSON(
 }
 
 task('deploy', 'Deploys the contracts', async (_taskArgs, hre) => {
+  console.log('Compiling contracts')
+
+  await hre.run('compile')
+
+  const [deployer] = await hre.ethers.getSigners()
+
+  console.log('Deploying to network:', hre.network.name)
+  console.log('Deploying with account:', deployer.address)
+  console.log(
+    'Account balance:',
+    utils.formatEther(await deployer.getBalance()),
+  )
+
   const CryptogiftsFactory = await hre.ethers.getContractFactory('Cryptogifts')
 
   const Cryptogifts = await CryptogiftsFactory.deploy()
