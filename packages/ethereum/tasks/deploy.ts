@@ -8,13 +8,12 @@ async function updateAdressesJSON(
   contract: string,
   address: string,
 ) {
-  const filePath = path.resolve('./contracts-ts/addresses.json')
+  const filePath = path.resolve(`./addresses/${network}.json`)
   console.log({ network, contract, address, filePath })
   const data = JSON.parse(
     fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '{}',
   )
-  data[network] = data[network] || {}
-  data[network][contract] = address
+  data[contract] = address
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
 }
 

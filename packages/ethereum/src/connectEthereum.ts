@@ -18,6 +18,7 @@ import {
 import type { ChainInfo, FeeData } from './types'
 
 import detectEthereumProvider from '@metamask/detect-provider'
+import { chains } from './data'
 
 type EthereumProvider = import('eip1193-provider').default
 
@@ -42,10 +43,22 @@ const getEthereumProvider = (dev: boolean) =>
         }
       })
 
-const getContractAddress = () =>
-  import('../contracts-ts/addresses.json').then(
-    (addresses) => addresses.localhost.Cryptogift,
-  )
+const getAddressFile = async (chainId: number) => {
+  const chain = chains.get(chainId)
+
+  switch (chain?.chainName) {
+    case 'Localhost':
+      return import('../addresses/localhost.json')
+    case 'Ropsten':
+      return import('../addresses/ropsten.json')
+  }
+}
+
+const getContractAddress = (chainId: number) => async () =>
+  getAddressFile(chainId).then((file) => {
+    if (!file) throw new Error('No contract address found')
+    return file.Cryptogift
+  })
 
 export function connectEthereum(privateKey?: string, chainId?: number) {
   console.log('connectEthereum', { chainId })
@@ -69,6 +82,13 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
     startWith(void 0),
     shareReplay(1),
   )
+
+  const contractAddress$ = chainId
+    ? defer(getContractAddress(chainId))
+    : network$.pipe(
+        filter((n) => !!n),
+        switchMap((n) => defer(getContractAddress(n.chainId))),
+      )
 
   const signer$ = ethereumProvider$.pipe(
     map(({ provider }) =>
@@ -138,7 +158,7 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
                 switchMap(([{ provider }, address]) =>
                   provider ? provider.getBalance(address) : of(null),
                 ),
-                distinctUntilChanged(),
+                distinctUntilChanged((prev, cur) => prev?._hex === cur?._hex),
                 tap((balance) => console.log('balance$', balance)),
                 shareReplay(1),
               ),
@@ -165,10 +185,8 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
     shareReplay(1),
   )
 
-  const contract$ = combineLatest([
-    defer(getContractAddress),
-    contractSigner$,
-  ]).pipe(
+  const contract$ = combineLatest([contractAddress$, contractSigner$]).pipe(
+    tap(([address, signer]) => console.log('contract$', { address, signer })),
     switchMap(([contractAddress, contractSigner]) =>
       import('../contracts-ts').then(({ CryptoGifts__factory }) =>
         CryptoGifts__factory.connect(contractAddress, contractSigner),

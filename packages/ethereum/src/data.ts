@@ -10,7 +10,7 @@ export const chains = new Map<Chain, ChainInfo>([
     31337,
     {
       chainId: '0x7A69',
-      chainName: 'Hardhat',
+      chainName: 'Localhost',
       rpcUrls: ['http://localhost:8545'],
     },
   ],
