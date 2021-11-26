@@ -1,4 +1,4 @@
-export type { CryptoGifts, GiftStruct } from '@cryptogifts/ethereum'
+export type { Cryptogifts, GiftStruct } from '@cryptogifts/ethereum'
 
 import { browser } from '$app/env'
 import { DEV_MODE } from '$lib/env'
@@ -15,6 +15,7 @@ export const getChainName = (chainId: number): string =>
 
 export const METAMASK_URL =
   'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
+
 export const {
   address$,
   block$,

@@ -44,7 +44,7 @@ contract Cryptogifts is Ownable {
 
   function getRequiredGas() public pure returns (uint256) {
     // TODO: calculate required gas
-    return .5 ether;
+    return 1 wei;
   }
 
   error ValueMustBeGreaterThanZero();

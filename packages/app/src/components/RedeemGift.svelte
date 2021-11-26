@@ -1,6 +1,6 @@
 <script lang="ts">
 import { GiftCard } from '$components'
-import { CryptoGifts, getGift$ } from '$lib/services/ethereum'
+import { Cryptogifts, getGift$ } from '$lib/services/ethereum'
 import type { RedeemableGift } from '$lib/types'
 import {
   BigNumber,
@@ -14,7 +14,7 @@ import type { Signer, Wallet } from 'ethers'
 import { api } from '$lib/services/api'
 
 export let giftMeta: RedeemableGift
-export let contract: CryptoGifts
+export let contract: Cryptogifts
 export let user: {
   balance$: Observable<BigNumber | undefined | null>
   signer: Wallet

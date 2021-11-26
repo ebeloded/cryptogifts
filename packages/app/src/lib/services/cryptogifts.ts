@@ -1,4 +1,4 @@
-import type { CryptoGifts } from '@cryptogifts/ethereum'
+import type { Cryptogifts } from '@cryptogifts/ethereum'
 import type { RedeemableGift } from '$lib/types'
 
 import { Network } from '$lib/types'
@@ -6,7 +6,7 @@ import { utils } from '@cryptogifts/ethereum'
 import { nanoid } from 'nanoid'
 
 export async function createGiftOfETH(
-  contract: CryptoGifts,
+  contract: Cryptogifts,
   chainId: number,
   message: string,
   giftValueEth: string,
@@ -47,6 +47,6 @@ export async function decodeGiftCode(
   return JSON.parse(window.atob(giftEncoded))
 }
 
-export async function requestTransferFee(contract: CryptoGifts): Promise<void> {
+export async function requestTransferFee(contract: Cryptogifts): Promise<void> {
   // needs to sign a message to verify current account address
 }

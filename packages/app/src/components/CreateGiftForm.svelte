@@ -4,10 +4,10 @@ Allows creating the gift
 <script lang="ts">
 import { createGiftOfETH, encodeGift } from '$lib/services/cryptogifts'
 
-import type { CryptoGifts } from '$lib/services/ethereum'
+import type { Cryptogifts } from '$lib/services/ethereum'
 import { createEventDispatcher } from 'svelte'
 
-export let contract: CryptoGifts
+export let contract: Cryptogifts
 export let network: any
 
 const dispatch = createEventDispatcher<{ created: any }>()
