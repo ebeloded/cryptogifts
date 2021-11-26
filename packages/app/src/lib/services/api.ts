@@ -1,6 +1,6 @@
 import { proxyObjectCall } from 'object-call-utils'
 import { functions, httpsCallable } from './firebase/functions'
-import type { API } from '@cryptogifts/api'
+import type { API } from '@cryptogifts/functions'
 
 const panic = (err: string) => {
   throw new Error(err)

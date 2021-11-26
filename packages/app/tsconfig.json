@@ -18,11 +18,11 @@
       "$components/*": ["src/components/*"],
       "$services": ["src/services"],
       "$services/*": ["src/services/*"],
-      "@cryptogifts/api": ["../api"]
+      "@cryptogifts/functions": ["../functions"]
     },
     "rootDir": ".."
   },
-  "references": [{ "path": "../api" }, { "path": "../ethereum" }],
+  "references": [{ "path": "../functions" }, { "path": "../ethereum" }],
   "extends": "../../tsconfig.base.json",
   "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"]
 }

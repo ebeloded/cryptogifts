@@ -1,8 +1,0 @@
-{
-  "name": "@cryptogifts/api",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "dependencies": {
-    "ethers": "5.5.1"
-  }
-}
