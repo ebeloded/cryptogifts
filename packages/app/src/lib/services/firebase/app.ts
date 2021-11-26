@@ -1,4 +1,4 @@
 import { initializeApp } from 'firebase/app'
-import { config } from './config'
+import { firebaseConfig } from './config'
 
-export const app = initializeApp(config)
+export const app = initializeApp(firebaseConfig)

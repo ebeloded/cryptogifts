@@ -1,3 +1,3 @@
 // @index('./*.ts', f => `export { ${f.name} } from '${f.path}'`)
-export { requestFeeForTransaction } from './requestFeeForTransaction'
+export { requestTransferFee } from './requestTransferFee'
 // @endindex

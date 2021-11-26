@@ -16,6 +16,7 @@
     "@tailwindcss/typography": "0.4.1",
     "autoprefixer": "10.4.0",
     "eip1193-provider": "1.0.1",
+    "postcss": "8.4.1",
     "svelte": "3.44.2",
     "svelte-check": "^2.2.10",
     "svelte-preprocess": "4.9.8",
@@ -42,8 +43,6 @@
     "rxjs": "7.4.0",
     "safe-ls": "1.0.0",
     "svelte-feather-icons": "3.5.0",
-    "svelte-trigger-action": "1.11.0",
-    "walletlink": "2.2.8",
-    "web3": "1.6.1"
+    "svelte-trigger-action": "1.11.0"
   }
 }

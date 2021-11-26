@@ -19,6 +19,21 @@ const config = {
           $lib: resolve('./src/lib'),
         },
       },
+      ssr: {
+        external: ['firebase/app', 'firebase/analytics', 'firebase/functions'],
+      },
+      optimizeDeps: {
+        exclude: [
+          'clsx',
+          'firebase/firestore',
+          'firebase/auth',
+          'firebase/functions',
+          'firebase/app',
+          'ramda',
+          'rxjs',
+          'rxjs/operators',
+        ],
+      },
     },
   },
 }

@@ -1,54 +1,46 @@
 <script lang="ts">
-import { ConnectWalletButton, GetWalletButton } from '$components'
-
-import {
-  chains,
-  changeNetwork,
-  CryptoGifts,
-  getChainName,
-  METAMASK_URL,
-} from '$lib/services/ethereum'
+import { GiftCard } from '$components'
+import type { CryptoGifts } from '$lib/services/ethereum'
 import type { RedeemableGift } from '$lib/types'
+import { BigNumber, hash, utils } from '@cryptogifts/ethereum'
+import type { Observable } from 'rxjs'
+import type { Signer } from 'ethers'
+import { api } from '$lib/services/api'
 
 export let gift: RedeemableGift
 export let contract: CryptoGifts
-export let user: any
+export let user: { balance$: Observable<BigNumber>; signer: Signer }
 export let network: any
+
+const { balance$, signer } = user
+$: console.log({ balance$: $balance$ })
+
+async function getBalanceNecessaryToRedeem() {
+  return utils.parseUnits('0.1', 'ether')
+}
+
+let requestingTransfer
+async function requestTransferFee() {
+  // const addr = utils.verifyMessage('', signature)
+  const keyHash = hash(gift.k)
+  const signature = await signer.signMessage(keyHash)
+  console.log({ signature, keyHash })
+  const result = await api.requestTransferFee(keyHash, signature)
+}
 </script>
 
-<p>You've got a gift card. How exciting!</p>
-{#if network}
-  {#if user}
-    {#if gift.c === network.chainId}
-      On the right chainId
-      <br />
-
-      Your gift is on {getChainName(gift.c)}, while you are on {getChainName(
-        network.chainId,
-      )}
+<!-- On the right chain -->
+<GiftCard gift={gift} contract={contract} />
+{#if $balance$ !== void 0}
+  {#await getBalanceNecessaryToRedeem() then necessaryBalance}
+    {#if $balance$.gte(necessaryBalance)}
+      <button class="btn">Redeem Gift</button>
     {:else}
-      <p>
-        Your gift is on <strong>{getChainName(gift.c)}</strong>
-        , while you are on
-        <strong>{getChainName(network.chainId)}</strong>
-      </p>
-      <div>
-        <button on:click={() => changeNetwork(chains.get(gift.c))}>
-          Switch to {getChainName(gift.c)}
-        </button>
-      </div>
+      <p>You don't have ETH in your account to redeem the gift yet.</p>
+      <p />
+      <button class="btn" on:click={requestTransferFee}>
+        Request Transfer Fee
+      </button>
     {/if}
-  {:else if user === null}
-    <p>To see what's inside, connect your wallet</p>
-    <ConnectWalletButton />
-  {/if}
-{:else}
-  <p>
-    To see what's inside and to redeem your gift card, you'll need a crypto
-    wallet (<GetWalletButton class="link">Metamask</GetWalletButton>). Please
-    come back when you have the wallet installed.
-  </p>
+  {/await}
 {/if}
-<pre>
-{JSON.stringify({gift, network}, null, 2)}
-</pre>

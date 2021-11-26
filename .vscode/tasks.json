@@ -35,6 +35,18 @@
     },
 
     {
+      "label": "ethereum:deploy:localhost",
+      "type": "npm",
+      "script": "ethereum:deploy:localhost",
+      "isBackground": false,
+      "problemMatcher": [],
+      "group": "none",
+      "presentation": {
+        "group": "dev"
+      }
+    },
+
+    {
       "label": "functions:dev",
       "type": "npm",
       "script": "functions:dev",

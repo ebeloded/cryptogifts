@@ -1,4 +1,4 @@
-<section class="hero h-screen">
+<section class="hero h-screen -mt-16">
   <div class="text-center hero-content">
     <div class="w-2/3">
       <h1 class="mb-5 text-6xl font-bold leading-normal">

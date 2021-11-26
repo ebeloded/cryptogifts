@@ -135,11 +135,10 @@ export function connectEthereum(privateKey?: string) {
                 block$,
               ]).pipe(
                 switchMap(([{ provider }, address]) =>
-                  provider
-                    ? provider.getBalance(address).then(utils.formatEther)
-                    : of(null),
+                  provider ? provider.getBalance(address) : of(null),
                 ),
                 distinctUntilChanged(),
+                tap((balance) => console.log('balance$', balance)),
                 shareReplay(1),
               ),
             }
@@ -186,19 +185,7 @@ export function connectEthereum(privateKey?: string) {
       provider ? provider.getFeeData() : null,
     )
 
-  interface AddEthereumChainParameter {
-    chainId: string
-    blockExplorerUrls?: string[]
-    chainName?: string
-    iconUrls?: string[]
-    nativeCurrency?: {
-      name: string
-      symbol: string
-      decimals: number
-    }
-    rpcUrls?: string[]
-  }
-  const changeNetwork = (chainInfo: AddEthereumChainParameter) => {
+  const changeNetwork = (chainInfo: ChainInfo) => {
     console.log('changeNetwork', { chainInfo })
     ethereumProviderPromise.then(({ ethereum }) => {
       if (!ethereum) throw NoEthereumProviderError()

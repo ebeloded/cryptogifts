@@ -1,6 +1,10 @@
 <script lang="ts">
+import { utils } from '@cryptogifts/ethereum'
+
 export let user: any
 const { balance$ } = user
+
+$: balance = $balance$ === undefined ? '' : utils.formatEther($balance$)
 </script>
 
-<pre>{JSON.stringify(user.address, null, 2)} {$balance$}</pre>
+<pre>{user.address} {balance}</pre>

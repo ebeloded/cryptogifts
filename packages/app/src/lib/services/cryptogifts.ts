@@ -47,6 +47,6 @@ export async function decodeGiftCode(
   return JSON.parse(window.atob(giftEncoded))
 }
 
-export function requestTransactionsFee() {
+export async function requestTransferFee(contract: CryptoGifts): Promise<void> {
   // needs to sign a message to verify current account address
 }
