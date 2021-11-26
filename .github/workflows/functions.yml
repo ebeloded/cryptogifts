@@ -24,6 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup-node-pnpm-cache
+      - run: pnpm ethereum:compile
       - run: pnpm functions:build
       - if: ((github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && !startsWith(github.head_ref,'renovate')))
         run: pnpm functions:deploy
