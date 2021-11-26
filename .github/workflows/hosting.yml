@@ -17,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup-node-pnpm-cache
+      - run: pnpm ethereum:compile
       - run: pnpm app:build
       - uses: actions/upload-artifact@v2
         with:
