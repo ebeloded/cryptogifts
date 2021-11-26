@@ -8,7 +8,6 @@ import type { CryptoGifts } from '$lib/services/ethereum'
 import { createEventDispatcher } from 'svelte'
 
 export let contract: CryptoGifts
-export let user: any
 export let network: any
 
 const dispatch = createEventDispatcher<{ created: any }>()

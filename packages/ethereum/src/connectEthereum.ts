@@ -49,15 +49,19 @@ const getAddressFile = async (chainId: number) => {
   switch (chain?.chainName) {
     case 'Localhost':
       return import('../addresses/localhost.json')
+    case 'Hardhat':
+      return import('../addresses/hardhat.json')
     case 'Ropsten':
       return import('../addresses/ropsten.json')
+    case 'Rinkeby':
+      return import('../addresses/rinkeby.json')
   }
 }
 
 const getContractAddress = (chainId: number) => async () =>
   getAddressFile(chainId).then((file) => {
     if (!file) throw new Error('No contract address found')
-    return file.Cryptogift
+    return file.Cryptogifts
   })
 
 export function connectEthereum(privateKey?: string, chainId?: number) {
@@ -188,8 +192,8 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
   const contract$ = combineLatest([contractAddress$, contractSigner$]).pipe(
     tap(([address, signer]) => console.log('contract$', { address, signer })),
     switchMap(([contractAddress, contractSigner]) =>
-      import('../contracts-ts').then(({ CryptoGifts__factory }) =>
-        CryptoGifts__factory.connect(contractAddress, contractSigner),
+      import('../contracts-ts').then(({ Cryptogifts__factory }) =>
+        Cryptogifts__factory.connect(contractAddress, contractSigner),
       ),
     ),
   )
