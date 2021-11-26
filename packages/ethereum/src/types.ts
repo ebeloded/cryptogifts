@@ -1,3 +1,11 @@
+import type { BigNumber } from 'ethers'
+
+export interface FeeData {
+  maxFeePerGas: null | BigNumber
+  maxPriorityFeePerGas: null | BigNumber
+  gasPrice: null | BigNumber
+}
+
 export type ChainInfo = {
   chainId: string
   blockExplorerUrls?: string[]

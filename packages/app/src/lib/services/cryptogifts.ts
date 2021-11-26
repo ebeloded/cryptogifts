@@ -20,9 +20,9 @@ export async function createGiftOfETH(
   const putEthTransaction = await contract.putETH(hashHashKey, giftValue, {
     value,
   })
-
-  await putEthTransaction.wait(1)
-
+  console.log({ putEthTransaction })
+  const putEthTransactionResult = await putEthTransaction.wait(1)
+  console.log({ putEthTransactionResult })
   return {
     n: Network.ethereum,
     c: chainId,

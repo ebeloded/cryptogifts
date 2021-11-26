@@ -3,12 +3,7 @@ import { browser } from '$app/env'
 import { user$, contract$, network$ } from '$lib/services/ethereum'
 import { ConnectWalletButton, GetWalletButton } from '$components'
 
-import {
-  chains,
-  changeNetwork,
-  CryptoGifts,
-  getChainName,
-} from '$lib/services/ethereum'
+import { changeNetwork, getChainName, chains } from '$lib/services/ethereum'
 import { CodeForm, RedeemGift } from '$components'
 import { decodeGiftCode } from '$lib/services/cryptogifts'
 import { hashStore } from '$lib/stores'
@@ -29,10 +24,9 @@ $: code = $hashStore
               {#if gift.c === $network$.chainId}
                 <!-- On correct chain -->
                 <RedeemGift
-                  gift={gift}
+                  giftMeta={gift}
                   contract={$contract$}
                   user={$user$}
-                  network={$network$}
                 />
               {:else}
                 <p>
@@ -41,9 +35,15 @@ $: code = $hashStore
                   <strong>{getChainName($network$.chainId)}</strong>
                 </p>
                 <div>
-                  <button on:click={() => changeNetwork(chains.get(gift.c))}>
-                    Switch to {getChainName(gift.c)}
-                  </button>
+                  {#await Promise.resolve(chains.get(gift.c)) then chainInfo}
+                    {#if chainInfo}
+                      <button on:click={() => changeNetwork(chainInfo)}>
+                        Switch to {getChainName(gift.c)}
+                      </button>
+                    {:else}
+                      Unrecognized chain
+                    {/if}
+                  {/await}
                 </div>
               {/if}
             {:else if $user$ === null}
@@ -67,3 +67,5 @@ $: code = $hashStore
     {/if}
   </div>
 </div>
+
+<slot />

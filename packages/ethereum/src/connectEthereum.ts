@@ -1,4 +1,4 @@
-import { ethers, utils } from 'ethers'
+import { ethers, utils, Wallet } from 'ethers'
 import {
   from,
   switchMap,
@@ -15,7 +15,7 @@ import {
   filter,
   of,
 } from 'rxjs'
-import type { ChainInfo } from './types'
+import type { ChainInfo, FeeData } from './types'
 
 import detectEthereumProvider from '@metamask/detect-provider'
 
@@ -47,7 +47,8 @@ const getContractAddress = () =>
     (addresses) => addresses.localhost.Cryptogift,
   )
 
-export function connectEthereum(privateKey?: string) {
+export function connectEthereum(privateKey?: string, chainId?: number) {
+  console.log('connectEthereum', { chainId })
   const ethereumProviderPromise = getEthereumProvider(!!privateKey)
 
   const ethereumProvider$ = from(ethereumProviderPromise).pipe(
@@ -123,7 +124,7 @@ export function connectEthereum(privateKey?: string) {
 
         return address && network
           ? {
-              signer: signer(),
+              signer: signer() as Wallet,
               address,
               name: await provider.lookupAddress(address).catch(() => null),
               avatar: '', //TODO: fetch avatar
@@ -175,12 +176,16 @@ export function connectEthereum(privateKey?: string) {
     ),
   )
 
+  const getGift$ = (hashHashKey: string) =>
+    combineLatest([contract$, block$]).pipe(
+      switchMap(([contract]) => contract.get(hashHashKey)),
+    )
+
   const connectAccount = () =>
     ethereumProviderPromise.then(({ provider }) =>
       provider!.send('eth_requestAccounts', []),
     )
-
-  const getFeeData = () =>
+  const getFeeData = (): Promise<FeeData | null> =>
     ethereumProviderPromise.then(({ provider }) =>
       provider ? provider.getFeeData() : null,
     )
@@ -218,6 +223,7 @@ export function connectEthereum(privateKey?: string) {
     contract$,
     user$,
     block$,
+    getGift$,
     getFeeData,
     connectAccount,
     changeNetwork,

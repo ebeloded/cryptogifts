@@ -5,3 +5,16 @@ export enum Chain {
   Kovan = 42,
   Hardhat = 31337,
 }
+
+export enum GiftType {
+  ETH,
+  ERC20,
+  ERC721,
+}
+
+export enum GiftStatus {
+  NONE,
+  PENDING,
+  REDEEMED,
+  REVOKED,
+}

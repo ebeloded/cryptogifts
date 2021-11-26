@@ -1,46 +1,89 @@
 <script lang="ts">
 import { GiftCard } from '$components'
-import type { CryptoGifts } from '$lib/services/ethereum'
+import { CryptoGifts, getGift$ } from '$lib/services/ethereum'
 import type { RedeemableGift } from '$lib/types'
-import { BigNumber, hash, utils } from '@cryptogifts/ethereum'
+import {
+  BigNumber,
+  hashHash,
+  hash,
+  utils,
+  GiftStatus,
+} from '@cryptogifts/ethereum'
 import type { Observable } from 'rxjs'
-import type { Signer } from 'ethers'
+import type { Signer, Wallet } from 'ethers'
 import { api } from '$lib/services/api'
 
-export let gift: RedeemableGift
+export let giftMeta: RedeemableGift
 export let contract: CryptoGifts
-export let user: { balance$: Observable<BigNumber>; signer: Signer }
-export let network: any
+export let user: {
+  balance$: Observable<BigNumber | undefined | null>
+  signer: Wallet
+}
 
 const { balance$, signer } = user
-$: console.log({ balance$: $balance$ })
+
+$: gift$ = getGift$(hashHash(giftMeta.k))
+$: gift = $gift$
 
 async function getBalanceNecessaryToRedeem() {
+  // TODO: implement correct balance estimation
   return utils.parseUnits('0.1', 'ether')
 }
 
-let requestingTransfer
 async function requestTransferFee() {
-  // const addr = utils.verifyMessage('', signature)
-  const keyHash = hash(gift.k)
+  const keyHash = hash(giftMeta.k)
   const signature = await signer.signMessage(keyHash)
-  console.log({ signature, keyHash })
-  const result = await api.requestTransferFee(keyHash, signature)
+
+  const result = await api.requestTransferFee({
+    keyHash,
+    signature,
+    chainId: giftMeta.c,
+  })
+
+  console.log({ result })
+}
+
+async function redeemGift() {
+  console.log('redeem gift')
+  await contract.redeemGift(giftMeta.k).catch((err) => {
+    console.log({ err })
+  })
+}
+
+async function getGift() {
+  try {
+    const giftInfo = await contract.get(hashHash(giftMeta.k))
+    console.log({ giftInfo })
+    return giftInfo
+  } catch (err) {
+    console.log('couldnt load gift details', err)
+  }
 }
 </script>
 
 <!-- On the right chain -->
-<GiftCard gift={gift} contract={contract} />
-{#if $balance$ !== void 0}
-  {#await getBalanceNecessaryToRedeem() then necessaryBalance}
-    {#if $balance$.gte(necessaryBalance)}
-      <button class="btn">Redeem Gift</button>
-    {:else}
-      <p>You don't have ETH in your account to redeem the gift yet.</p>
-      <p />
-      <button class="btn" on:click={requestTransferFee}>
-        Request Transfer Fee
-      </button>
+
+{#if gift}
+  <pre>gift status: {gift.status}</pre>
+  <GiftCard gift={gift} />
+
+  {#if gift.status === GiftStatus.PENDING}
+    {#if $balance$ !== void 0 && $balance$ !== null}
+      {#await getBalanceNecessaryToRedeem() then necessaryBalance}
+        {#if $balance$.gte(necessaryBalance)}
+          <button class="btn" on:click={redeemGift}>Redeem Gift</button>
+        {:else}
+          <p>You don't have ETH in your account to redeem the gift yet.</p>
+          <p />
+          <button class="btn" on:click={requestTransferFee}>
+            Request Transfer Fee
+          </button>
+        {/if}
+      {/await}
     {/if}
-  {/await}
+  {:else if gift.status === GiftStatus.REDEEMED}
+    <p>This gift has been redeemed.</p>
+  {:else if gift.status === GiftStatus.REVOKED}
+    <p>This gift has been revoked.</p>
+  {/if}
 {/if}

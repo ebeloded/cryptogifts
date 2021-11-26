@@ -10,7 +10,7 @@ const buildOptions = {
   bundle: true,
   incremental: true,
   platform: 'node',
-  sourcemap: 'inline',
+  sourcemap: false,
   outdir: 'build',
   logLevel: 'info',
   target: 'node14',
