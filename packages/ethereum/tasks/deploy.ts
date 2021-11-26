@@ -18,10 +18,9 @@ async function updateAdressesJSON(
 }
 
 task('deploy', 'Deploys the contracts', async (_taskArgs, hre) => {
-  const { CryptoGifts__factory } = await import('../contracts-ts')
-  const [signer] = await hre.ethers.getSigners()
+  const CryptogiftsFactory = await hre.ethers.getContractFactory('Cryptogifts')
 
-  const Cryptogift = await new CryptoGifts__factory(signer).deploy()
+  const Cryptogifts = await CryptogiftsFactory.deploy()
 
-  await updateAdressesJSON(hre.network.name, 'Cryptogift', Cryptogift.address)
+  await updateAdressesJSON(hre.network.name, 'Cryptogifts', Cryptogifts.address)
 })

@@ -7,4 +7,4 @@ const { balance$ } = user
 $: balance = $balance$ === undefined ? '' : utils.formatEther($balance$)
 </script>
 
-<pre>{user.address} {balance}</pre>
+<pre>{user.name || user.address} {balance}</pre>

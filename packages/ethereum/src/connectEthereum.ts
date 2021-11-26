@@ -147,7 +147,7 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
               signer: signer() as Wallet,
               address,
               name: await provider.lookupAddress(address).catch(() => null),
-              avatar: '', //TODO: fetch avatar
+              avatar: await provider.getAvatar(address).catch(() => null),
               getBalance,
               balance$: combineLatest([
                 ethereumProvider$,

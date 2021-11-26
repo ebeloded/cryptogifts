@@ -19,18 +19,24 @@ task('accounts', 'Prints the list of accounts', async (_taskArgs, hre) => {
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
-
+const accounts =
+  process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : []
 const config: HardhatUserConfig = {
   solidity: '0.8.4',
   defaultNetwork: 'hardhat',
   networks: {
-    // hardhat: {
-    //   chainId: 1337,
-    // },
+    hardhat: {},
     ropsten: {
-      url: process.env.ROPSTEN_URL || '',
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      url: process.env.ROPSTEN_URL,
+      accounts,
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_URL,
+      accounts,
+    },
+    kovan: {
+      url: process.env.KOVAN_URL,
+      accounts,
     },
   },
   gasReporter: {
