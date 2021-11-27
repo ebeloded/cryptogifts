@@ -30,6 +30,8 @@ const ADDRESSES = {
   Localhost: () => import('../addresses/localhost.json'),
   Hardhat: () => import('../addresses/hardhat.json'),
   Ropsten: () => import('../addresses/ropsten.json'),
+  Kovan: () => import('../addresses/kovan.json'),
+  FujiAvalanche: () => import('../addresses/fujiAvalanche.json'),
   Rinkeby: () => import('../addresses/rinkeby.json'),
 }
 
