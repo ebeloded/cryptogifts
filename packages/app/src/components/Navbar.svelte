@@ -3,7 +3,7 @@ import { ConnectWalletButton, UserInfo, GetWalletButton } from '.'
 import { user$, address$, network$ } from '$lib/services/ethereum'
 </script>
 
-<header class="navbar inset-x-0 top-0 h-16">
+<header class="sticky navbar inset-x-0 top-0 h-16">
   <div class="flex-none px-2 mx-2">
     <a
       href="/"

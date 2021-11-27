@@ -25,7 +25,6 @@ onMount(() => {
   </div>
 
   {#if DEV_MODE && browser}
-    <FeeData />
     <DevPanel />
   {/if}
 </div>

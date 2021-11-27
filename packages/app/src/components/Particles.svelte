@@ -121,5 +121,5 @@ onMount(() => {
 
 <div
   id="particles-js"
-  class="absolute inset-0 pointer-events-none opacity-50"
+  class="absolute inset-0 pointer-events-none opacity-50 z-0"
 />

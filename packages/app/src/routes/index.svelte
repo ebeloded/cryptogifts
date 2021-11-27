@@ -5,7 +5,7 @@
         Send crypto to friends without wallets
       </h1>
       <p class="my-5 text-lg tracking-wide">
-        Make a gift that gets better with time
+        Make a gift that gets better over time
       </p>
       <div class="my-5">
         <a
