@@ -3,3 +3,5 @@
 // interface EthereumProvider {
 //   autoRefreshOnNetworkChange?: boolean
 // }
+
+let particlesJS: any

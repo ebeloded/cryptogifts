@@ -70,10 +70,15 @@ export async function createGiftOfETH(
   }
 }
 
-export async function redeemGiftOfETH(gift: RedeemableGift) {
-  // create key hash
-  console.log({ gift })
-  // send it to functions
+export async function redeemGift(contract: Cryptogifts, key: string) {
+  console.log('redeem gift')
+
+  const contractTransaction = await contract.redeemGift(key)
+  console.log({ contractTransaction })
+
+  const contractReceipt = await contractTransaction.wait(1)
+
+  console.log({ contractReceipt })
 }
 
 export async function encodeGift(gift: RedeemableGift): Promise<string> {

@@ -37,7 +37,11 @@ export const requestTransferFee = async ({
 
   console.log(`providing ${utils.formatEther(gift.giftGas)} to ${addr}`)
   try {
-    await contract.provideTransferFee(addr, keyHash)
+    const contractTransaction = await contract.provideTransferFee(addr, keyHash)
+
+    console.log({ contractTransaction })
+
+    return contractTransaction
   } catch (err) {
     console.error(err)
     throw new Error(`Error providing transfer fee`)

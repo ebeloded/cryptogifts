@@ -9,7 +9,10 @@ import {
   utils,
   GiftStatus,
 } from '@cryptogifts/ethereum'
-import { getBalanceNecessaryToRedeem } from '$lib/services/cryptogifts'
+import {
+  getBalanceNecessaryToRedeem,
+  redeemGift,
+} from '$lib/services/cryptogifts'
 
 import type { Observable } from 'rxjs'
 import type { Wallet } from 'ethers'
@@ -40,11 +43,8 @@ async function requestTransferFee() {
   console.log({ result })
 }
 
-async function redeemGift() {
-  console.log('redeem gift')
-  await contract.redeemGift(giftMeta.k).catch((err) => {
-    console.log({ err })
-  })
+async function triggerRedeemGift() {
+  await redeemGift(contract, giftMeta.k)
 }
 </script>
 
@@ -58,7 +58,7 @@ async function redeemGift() {
     {#if $balance$ !== void 0 && $balance$ !== null}
       {#await getBalanceNecessaryToRedeem(contract) then necessaryBalance}
         {#if $balance$.gte(necessaryBalance)}
-          <button class="btn" on:click={redeemGift}>Redeem Gift</button>
+          <button class="btn" on:click={triggerRedeemGift}>Redeem Gift</button>
         {:else}
           <p>You don't have ETH in your account to redeem the gift yet.</p>
           <p />
