@@ -9,15 +9,15 @@ const { balance$ } = user
 
 <div class="px-2 mx-2">
   <div class="">
-    <button class="btn-ghost btn-xs">
+    <button class="btn btn-ghost btn-xs">
       ⛓ {getChainName($network$.chainId)}
     </button>
-    <button class="btn-ghost btn-xs">
+    <button class="btn btn-ghost btn-xs">
       <UserBalance balance={$balance$} />
       <span class="px-2">|</span>
-      <span class="text-info">{user.name || formatAddress(user.address)}</span>
+      <span class="text-accent">
+        {user.name || formatAddress(user.address)}
+      </span>
     </button>
   </div>
 </div>
-
-<!-- <pre>{user.name || user.address} {balance}</pre> -->

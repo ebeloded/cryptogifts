@@ -4,10 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
-select {
-  @apply select;
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-button {
-  @apply btn;
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
 }

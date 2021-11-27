@@ -19,14 +19,16 @@ $: loading = $user$ === undefined
     Loading...
   {:else}
     <InstallOrConnectGuard>
-      <div class="mx-auto w-full max-w-md" in:scale={{ start: 0.9 }}>
-        <CreateGiftForm
-          contract={$contract$}
-          network={$network$}
-          user={$user$}
-          on:created={({ detail }) => goto(`/gifts/${detail}`)}
-        />
-      </div>
+      {#if $contract$}
+        <div class="mx-auto w-full max-w-md" in:scale={{ start: 0.9 }}>
+          <CreateGiftForm
+            contract={$contract$}
+            network={$network$}
+            user={$user$}
+            on:created={({ detail }) => goto(`/gifts/${detail}`)}
+          />
+        </div>
+      {/if}
     </InstallOrConnectGuard>
   {/if}
 </div>

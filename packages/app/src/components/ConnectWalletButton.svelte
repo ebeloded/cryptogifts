@@ -11,4 +11,6 @@ const connectWallet = async () => {
 }
 </script>
 
-<button on:click={connectWallet}><slot>Connect Wallet</slot></button>
+<button class="btn" on:click={connectWallet}>
+  <slot>Connect Wallet</slot>
+</button>

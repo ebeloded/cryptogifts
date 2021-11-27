@@ -7,4 +7,4 @@ $: formattedBalance =
   balance === undefined ? '' : Number(utils.formatEther(balance)).toFixed(5)
 </script>
 
-<span class="text-warning">{formattedBalance} ETH</span>
+<span class="text-info">{formattedBalance} ETH</span>

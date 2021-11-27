@@ -21,7 +21,7 @@ $: if (privateKey.get() !== value) {
 
 <div class="fixed bottom-0 inset-x-0 flex justify-center p-2">
   {#await getAccounts() then accounts}
-    <select class="select-bordered" bind:value>
+    <select class="select select-bordered" bind:value>
       <option value={void 0}>None</option>
       {#each accounts as account, i}
         <option value={account.private_key}>
