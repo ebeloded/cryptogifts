@@ -12,7 +12,7 @@ import { pingPong } from '$lib/init'
 import { goto } from '$app/navigation'
 
 onMount(() => {
-  goto('/')
+  // goto('/')
   pingPong()
 })
 </script>
