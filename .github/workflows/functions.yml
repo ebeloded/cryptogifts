@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - packages/functions/**
-      - packages/api/**
+      - packages/ethereum/**
       - .github/workflows/functions.yml
 
 jobs:

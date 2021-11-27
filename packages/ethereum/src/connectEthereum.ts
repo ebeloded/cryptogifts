@@ -67,7 +67,7 @@ const getContractAddress = (chainId: number) => async () =>
   })
 
 export function connectEthereum(privateKey?: string, chainId?: number) {
-  console.log('connectEthereum', { chainId })
+  console.log('connectEthereum', { privateKey, chainId })
   const ethereumProviderPromise = getEthereumProvider(!!privateKey, chainId)
 
   const ethereumProvider$ = from(ethereumProviderPromise).pipe(

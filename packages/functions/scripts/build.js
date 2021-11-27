@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+import 'dotenv/config'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
 import esbuild from 'esbuild'
@@ -14,6 +14,13 @@ const buildOptions = {
   outdir: 'build',
   logLevel: 'info',
   target: 'node14',
+  define: {
+    'process.env.PRIVATE_KEY': `'${process.env.PRIVATE_KEY}'`,
+    'process.env.HARDHAT_PRIVATE_KEY': `'${process.env.HARDHAT_PRIVATE_KEY}'`,
+    'process.env.ROPSTEN_URL': `'${process.env.ROPSTEN_URL}'`,
+    'process.env.RINKEBY_URL': `'${process.env.RINKEBY_URL}'`,
+    'process.env.KOVAN_URL': `'${process.env.KOVAN_URL}'`,
+  },
   format: 'esm',
   external: Object.keys(
     JSON.parse(
