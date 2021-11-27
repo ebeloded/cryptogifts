@@ -77,8 +77,9 @@ async function triggerRedeemGift() {
                 Redeem Gift
               </button>
             {:else}
-              <p>You don't have ETH in your wallet to redeem the gift yet.</p>
-              <p />
+              <p class="my-4">
+                You don't have ETH in your wallet to redeem the gift yet.
+              </p>
               <button class="btn" on:click={requestTransferFee}>
                 Request Transfer Fee
               </button>
