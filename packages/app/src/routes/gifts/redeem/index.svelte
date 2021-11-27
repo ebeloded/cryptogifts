@@ -9,17 +9,22 @@ import { decodeGiftCode } from '$lib/services/cryptogifts'
 import { hashStore } from '$lib/stores'
 
 $: code = $hashStore
+
+$: loading = $user$ === undefined
 </script>
 
-<div class="min-h-screen flex justify-center items-center">
-  <div>
+<div class="-mt-16 min-h-screen flex justify-center items-center">
+  <div class="mx-auto w-full max-w-md">
     {#if browser}
+      {#if loading}
+        <div class="text-center">Loading...</div>
+      {/if}
       {#if code}
         {#await decodeGiftCode(code) then gift}
-          <p>You've got a gift card. How exciting!</p>
           {#if $network$}
             <!-- Has wallet -->
             {#if $user$}
+              <h2 class="card-title text-center">Here is your gift card!</h2>
               <!-- Authenticated -->
               {#if gift.c === $network$.chainId}
                 <!-- On correct chain -->
@@ -50,7 +55,7 @@ $: code = $hashStore
               <p>To see what's inside, connect your wallet</p>
               <ConnectWalletButton />
             {/if}
-          {:else}
+          {:else if $network$ === null}
             <p>
               To see what's inside and to redeem your gift card, you'll need a
               crypto wallet (<GetWalletButton class="link"

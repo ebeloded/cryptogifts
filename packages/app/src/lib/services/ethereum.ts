@@ -29,4 +29,5 @@ export const {
   getFeeData,
   changeNetwork,
   connectAccount,
+  lookupAddress,
 } = browser ? connectEthereum(PK) : ({} as ReturnType<typeof connectEthereum>)

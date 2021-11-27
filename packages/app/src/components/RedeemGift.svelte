@@ -9,6 +9,7 @@ import {
   utils,
   GiftStatus,
 } from '@cryptogifts/ethereum'
+import { fade } from 'svelte/transition'
 import {
   getBalanceNecessaryToRedeem,
   redeemGift,
@@ -30,7 +31,9 @@ const { balance$, signer } = user
 $: gift$ = getGift$(hashHash(giftMeta.k))
 $: gift = $gift$
 
+let requestingTransferFee = false
 async function requestTransferFee() {
+  requestingTransferFee = true
   const keyHash = hash(giftMeta.k)
   const signature = await signer.signMessage(keyHash)
 
@@ -39,38 +42,52 @@ async function requestTransferFee() {
     signature,
     chainId: giftMeta.c,
   })
-
-  console.log({ result })
+  requestingTransferFee = false
 }
-
+let redeeming = false
 async function triggerRedeemGift() {
+  redeeming = true
   await redeemGift(contract, giftMeta.k)
+  redeeming = false
 }
 </script>
 
 <!-- On the right chain -->
 
 {#if gift}
-  <pre>gift status: {gift.status}</pre>
-  <GiftCard gift={gift} />
-
-  {#if gift.status === GiftStatus.PENDING}
-    {#if $balance$ !== void 0 && $balance$ !== null}
-      {#await getBalanceNecessaryToRedeem(contract) then necessaryBalance}
-        {#if $balance$.gte(necessaryBalance)}
-          <button class="btn" on:click={triggerRedeemGift}>Redeem Gift</button>
-        {:else}
-          <p>You don't have ETH in your account to redeem the gift yet.</p>
-          <p />
-          <button class="btn" on:click={requestTransferFee}>
-            Request Transfer Fee
-          </button>
+  <div class="space-y-6">
+    <div class="px-10">
+      <GiftCard gift={gift}>
+        {#if redeeming || requestingTransferFee}
+          <div
+            in:fade
+            class="absolute inset-0 flex flex-col bg-base-100/70 backdrop-blur-sm items-center justify-center"
+          >
+            Processing request...
+          </div>
         {/if}
-      {/await}
-    {/if}
-  {:else if gift.status === GiftStatus.REDEEMED}
-    <p>This gift has been redeemed.</p>
-  {:else if gift.status === GiftStatus.REVOKED}
-    <p>This gift has been revoked.</p>
-  {/if}
+      </GiftCard>
+    </div>
+    <div class="text-center">
+      {#if gift.status === GiftStatus.PENDING && !requestingTransferFee && !redeeming}
+        {#if $balance$ !== void 0 && $balance$ !== null}
+          {#await getBalanceNecessaryToRedeem(contract) then necessaryBalance}
+            {#if $balance$.gte(necessaryBalance)}
+              <button class="btn" on:click={triggerRedeemGift}>
+                Redeem Gift
+              </button>
+            {:else}
+              <p>You don't have ETH in your wallet to redeem the gift yet.</p>
+              <p />
+              <button class="btn" on:click={requestTransferFee}>
+                Request Transfer Fee
+              </button>
+            {/if}
+          {/await}
+        {/if}
+      {:else if gift.status === GiftStatus.REDEEMED}
+        <p>This gift has been redeemed</p>
+      {/if}
+    </div>
+  </div>
 {/if}

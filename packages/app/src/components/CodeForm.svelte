@@ -26,19 +26,27 @@ function redeemGift() {
 }
 </script>
 
-<div class="card shadow-lg compact side bg-base-200 p-10">
+<div class="card shadow-lg compact side bg-base-100 p-10 min-w-md">
   <form on:submit|preventDefault={redeemGift}>
     <fieldset class="space-y-6 flex flex-col">
-      <div>
+      <div class="form-control">
+        <label for="code" class="label">
+          <span class="label-text">Enter your gift code</span>
+        </label>
         <textarea
+          id="code"
           placeholder="Paste code in here"
           bind:value={code}
-          class="textarea select-all w-full h-24 textarea-lg"
+          class="textarea textarea-bordered w-full h-24 textarea-lg"
         />
+        {#if error}
+          <label class="label" for="code">
+            <div class="label-text-alt text-error">
+              {error}
+            </div>
+          </label>
+        {/if}
       </div>
-      {#if error}
-        {error}
-      {/if}
 
       <div>
         <button type="submit" disabled={!gift} class="btn btn-outline w-full">

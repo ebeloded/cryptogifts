@@ -42,12 +42,12 @@ $: scrolled = y > 20
       <a href="/#faq" class="btn btn-ghost btn-sm rounded-btn no-animation">
         FAQ
       </a>
-      <a
+      <!-- <a
         href="/#source-code"
         class="btn btn-ghost btn-sm rounded-btn no-animation"
       >
         Source Code
-      </a>
+      </a> -->
     </div>
   </div>
   <div class="flex-none">

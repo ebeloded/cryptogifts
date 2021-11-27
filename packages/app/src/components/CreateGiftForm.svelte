@@ -6,14 +6,12 @@ import { UserBalance } from '$components'
 import c from 'clsx'
 
 import {
-  createGiftOfETH,
   createGiftOfEthObservable,
-  encodeGift,
   getExtraFeeValue,
 } from '$lib/services/cryptogifts'
 
 import { Cryptogifts, getChainName, utils } from '$lib/services/ethereum'
-import { BigNumber, chains } from '@cryptogifts/ethereum'
+import { BigNumber } from '@cryptogifts/ethereum'
 import { Observable, tap } from 'rxjs'
 import { createEventDispatcher, onMount } from 'svelte'
 import { fade } from 'svelte/transition'

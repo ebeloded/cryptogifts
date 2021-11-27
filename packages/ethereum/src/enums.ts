@@ -16,5 +16,4 @@ export enum GiftStatus {
   NONE,
   PENDING,
   REDEEMED,
-  REVOKED,
 }

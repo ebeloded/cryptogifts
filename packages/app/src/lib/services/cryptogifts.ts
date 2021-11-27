@@ -125,14 +125,11 @@ export function createGiftOfEthObservable(
 }
 
 export async function redeemGift(contract: Cryptogifts, key: string) {
-  console.log('redeem gift')
-
   const contractTransaction = await contract.redeemGift(key)
-  console.log({ contractTransaction })
 
   const contractReceipt = await contractTransaction.wait(1)
 
-  console.log({ contractReceipt })
+  return contractReceipt
 }
 
 export async function encodeGift(gift: RedeemableGift): Promise<string> {

@@ -151,7 +151,7 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
         if (address && network) {
           const [name, avatar] = await Promise.all([
             provider.lookupAddress(address).catch(() => null),
-            provider.getAvatar(address).catch(() => null),
+            Promise.resolve(null), // provider.getAvatar(address).catch(() => null),
           ])
           return {
             signer: signer() as Wallet,
@@ -219,6 +219,11 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
       provider ? provider.getFeeData() : null,
     )
 
+  const lookupAddress = (address: string) =>
+    ethereumProviderPromise.then(({ provider }) =>
+      provider ? provider.lookupAddress(address).catch(() => null) : null,
+    )
+
   const changeNetwork = (chainInfo: ChainInfo) => {
     console.log('changeNetwork', { chainInfo })
     ethereumProviderPromise.then(({ ethereum }) => {
@@ -252,6 +257,7 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
     contract$,
     user$,
     block$,
+    lookupAddress,
     getGift$,
     getFeeData,
     connectAccount,
