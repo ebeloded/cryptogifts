@@ -148,28 +148,33 @@ export function connectEthereum(privateKey?: string, chainId?: number) {
         const getBalance = (addr: string) =>
           provider.getBalance(addr).then(utils.formatEther)
 
-        return address && network
-          ? {
-              signer: signer() as Wallet,
-              address,
-              name: await provider.lookupAddress(address).catch(() => null),
-              avatar: await provider.getAvatar(address).catch(() => null),
-              getBalance,
-              balance$: combineLatest([
-                ethereumProvider$,
-                address$,
-                network$,
-                block$,
-              ]).pipe(
-                switchMap(([{ provider }, address]) =>
-                  provider ? provider.getBalance(address) : of(null),
-                ),
-                distinctUntilChanged((prev, cur) => prev?._hex === cur?._hex),
-                tap((balance) => console.log('balance$', balance)),
-                shareReplay(1),
+        if (address && network) {
+          const [name, avatar] = await Promise.all([
+            provider.lookupAddress(address).catch(() => null),
+            provider.getAvatar(address).catch(() => null),
+          ])
+          return {
+            signer: signer() as Wallet,
+            address,
+            name,
+            avatar,
+            getBalance,
+            balance$: combineLatest([
+              ethereumProvider$,
+              address$,
+              network$,
+              block$,
+            ]).pipe(
+              switchMap(([{ provider }, address]) =>
+                provider ? provider.getBalance(address) : of(null),
               ),
-            }
-          : null
+              distinctUntilChanged((prev, cur) => prev?._hex === cur?._hex),
+              tap((balance) => console.log('balance$', balance)),
+              shareReplay(1),
+            ),
+          }
+        }
+        return null
       } else {
         return null
       }

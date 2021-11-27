@@ -1,6 +1,6 @@
 <script lang="ts">
-import { ConnectWalletButton, UserInfo, GetWalletButton } from '.'
-import { user$, address$, network$ } from '$lib/services/ethereum'
+import { InstallOrConnectGuard, UserMenu } from '.'
+import { user$ } from '$lib/services/ethereum'
 </script>
 
 <header class="sticky navbar inset-x-0 top-0 h-16">
@@ -26,18 +26,10 @@ import { user$, address$, network$ } from '$lib/services/ethereum'
     </div>
   </div>
   <div class="flex-none">
-    {#if $network$}
-      {#if $address$}
-        {#if $user$}
-          <UserInfo user={$user$} />
-        {/if}
-      {:else if $address$ === null}
-        <ConnectWalletButton>Connect Wallet</ConnectWalletButton>
-      {:else}
-        Loading...
+    <InstallOrConnectGuard>
+      {#if $user$}
+        <UserMenu user={$user$} />
       {/if}
-    {:else if $network$ === null}
-      <GetWalletButton>Install Metamask</GetWalletButton>
-    {/if}
+    </InstallOrConnectGuard>
   </div>
 </header>

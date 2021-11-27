@@ -1,11 +1,13 @@
 <section class="hero h-screen -mt-16">
   <div class="text-center hero-content">
     <div class="w-2/3">
-      <h1 class="my-5 text-6xl font-bold leading-normal tracking-wide">
-        Send crypto to friends without wallets
+      <h1
+        class="my-5 text-4xl leading-normal  sm:text-5xl sm:leading-normal lg:text-6xl lg:leading-normal font-bold tracking-wide"
+      >
+        Send crypto gifts to friends without wallets
       </h1>
       <p class="my-5 text-lg tracking-wide">
-        Make a gift that gets better over time
+        Make a gift that gets better with time
       </p>
       <div class="my-5">
         <a

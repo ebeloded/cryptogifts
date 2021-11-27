@@ -13,6 +13,9 @@ const PK = DEV_MODE ? privateKey.get() : void 0
 export const getChainName = (chainId: number): string =>
   chains.get(chainId)?.chainName ?? 'Unknown'
 
+export const formatAddress = (address: string): string =>
+  `${address.substr(0, 6)}...${address.substr(-4)}`
+
 export const METAMASK_URL =
   'https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn'
 

@@ -17,10 +17,9 @@ onMount(() => {
 })
 </script>
 
-<div>
+<div class="bg">
   <Navbar />
-  <Particles />
-  <div class="z-10">
+  <div>
     <slot />
   </div>
 
@@ -28,10 +27,10 @@ onMount(() => {
     <DevPanel />
   {/if}
 </div>
+<Particles />
 
 <style global>
-body {
-  --opacity: 0.3;
+.bg {
   background-image: radial-gradient(
       41.81% 41.81% at 65% 33%,
       rgba(89, 3, 127, 0.7) 0%,

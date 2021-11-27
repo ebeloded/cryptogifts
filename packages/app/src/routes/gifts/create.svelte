@@ -5,27 +5,29 @@
 
 -->
 <script lang="ts">
-import { CreateGiftForm, ConnectWalletButton } from '$components'
+import { CreateGiftForm, InstallOrConnectGuard } from '$components'
 import { scale } from 'svelte/transition'
-import { user$, contract$, network$ } from '$lib/services/ethereum'
+import { contract$, network$, user$ } from '$lib/services/ethereum'
 import { goto } from '$app/navigation'
+$: loading = $user$ === undefined
 </script>
 
-<div class="-mt-16 min-h-screen flex justify-center items-center">
-  <div>
-    {#if $user$}
-      <div in:scale={{ start: 0.9 }}>
+<div
+  class="-mt-16 min-h-screen flex justify-center items-center py-12 px-6 lg:px-8"
+>
+  {#if loading}
+    Loading...
+  {:else}
+    <InstallOrConnectGuard>
+      <div class="mx-auto w-full max-w-md" in:scale={{ start: 0.9 }}>
         <CreateGiftForm
           contract={$contract$}
           network={$network$}
-          on:created={({ detail: code }) => goto(`/gifts/${code}`)}
+          user={$user$}
+          on:created={({ detail }) => goto(`/gifts/${detail}`)}
         />
       </div>
-    {:else if $user$ === null}
-      <ConnectWalletButton />
-    {:else}
-      Loading...
-    {/if}
-  </div>
+    </InstallOrConnectGuard>
+  {/if}
 </div>
 <slot />

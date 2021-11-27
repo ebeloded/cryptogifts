@@ -1,6 +1,8 @@
 <script lang="ts">
+import { DEV_MODE } from '$lib/env'
 import { onMount } from 'svelte'
 
+let initialized = false
 function initParticles() {
   particlesJS('particles-js', {
     particles: {
@@ -112,14 +114,18 @@ function initParticles() {
     },
     retina_detect: true,
   })
+  initialized = true
 }
 
 onMount(() => {
+  // if (!DEV_MODE)
   initParticles()
 })
 </script>
 
 <div
   id="particles-js"
-  class="absolute inset-0 pointer-events-none opacity-50 z-0"
+  class="absolute inset-0 pointer-events-none transition-opacity duration-1000 {initialized
+    ? 'opacity-50'
+    : 'opacity-0'}"
 />

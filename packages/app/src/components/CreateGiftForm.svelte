@@ -2,6 +2,8 @@
 Allows creating the gift
 -->
 <script lang="ts">
+import { UserBalance } from '$components'
+
 import { createGiftOfETH, encodeGift } from '$lib/services/cryptogifts'
 
 import type { Cryptogifts } from '$lib/services/ethereum'
@@ -9,6 +11,11 @@ import { createEventDispatcher } from 'svelte'
 
 export let contract: Cryptogifts
 export let network: any
+export let user: any
+
+const { balance$ } = user
+
+$: balance = $balance$
 
 const dispatch = createEventDispatcher<{ created: any }>()
 
@@ -16,6 +23,12 @@ const form = {
   value: '',
   message: '',
 }
+
+const isValueValid = (value: string) => {
+  return value
+}
+
+$: amountInvalid = true
 
 async function addGift() {
   try {
@@ -34,7 +47,7 @@ async function addGift() {
 }
 </script>
 
-<create-gift-form class="block">
+<create-gift-form class="block bg-base-100 p-10 rounded-2xl">
   <form on:submit|preventDefault={addGift}>
     <fieldset class="space-y-6">
       <div>
@@ -49,7 +62,13 @@ async function addGift() {
             required
             placeholder="amount"
             class="input input-lg input-bordered"
+            class:input-error={amountInvalid}
           />
+          <label class="label" for="gift-amount">
+            <div class="label-text-alt">
+              Your current balance is: <UserBalance balance={balance} />
+            </div>
+          </label>
         </div>
       </div>
       <div class="form-control">
@@ -64,7 +83,7 @@ async function addGift() {
         />
       </div>
       <div>
-        <button type="submit" class="btn w-full btn-primary">
+        <button type="submit" class="btn btn-outline w-full">
           Create Gift
         </button>
       </div>
