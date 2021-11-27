@@ -1,8 +1,7 @@
 <script lang="ts">
-import { browser } from '$app/env'
 import { onMount } from 'svelte'
-onMount(() => {
-  console.log('remount particle')
+
+function initParticles() {
   particlesJS('particles-js', {
     particles: {
       number: {
@@ -25,7 +24,7 @@ onMount(() => {
           nb_sides: 5,
         },
         image: {
-          src: 'http://www.dynamicdigital.us/wp-content/uploads/2013/02/starburst_white_300_drop_2.png',
+          src: '/snowflake.png',
           width: 100,
           height: 100,
         },
@@ -113,6 +112,10 @@ onMount(() => {
     },
     retina_detect: true,
   })
+}
+
+onMount(() => {
+  initParticles()
 })
 </script>
 

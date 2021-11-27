@@ -19,7 +19,7 @@ onMount(() => {
 <div>
   <Navbar />
   <Particles />
-  <div>
+  <div class="z-10">
     <slot />
   </div>
 
