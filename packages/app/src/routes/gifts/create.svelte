@@ -12,12 +12,18 @@ import {
 } from '$components'
 import { scale } from 'svelte/transition'
 import { contract$, network$, user$ } from '$lib/services/ethereum'
+import { Network } from '$lib/types'
+import { encodeGift } from '$lib/services/cryptogifts'
 
 $: loading = $user$ === undefined
-
-let createdGift: any = null
-function onGiftCreated(giftDetails: any) {
-  createdGift = giftDetails
+let giftCode: string = ''
+async function onGiftCreated({ key, chainId }: any) {
+  giftCode = await encodeGift({
+    m: '',
+    k: key,
+    c: chainId,
+    n: Network.ethereum,
+  })
 }
 </script>
 
@@ -33,11 +39,8 @@ function onGiftCreated(giftDetails: any) {
           <div
             class="block bg-base-100 p-10 rounded-2xl relative overflow-hidden shadow-2xl"
           >
-            {#if createdGift}
-              <SendGiftForm
-                key={createdGift.key}
-                chainId={createdGift.chainId}
-              />
+            {#if giftCode}
+              <SendGiftForm giftCode={giftCode} />
             {:else}
               <CreateGiftForm
                 contract={$contract$}

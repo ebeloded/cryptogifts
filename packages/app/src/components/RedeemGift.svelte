@@ -15,9 +15,9 @@ import {
   redeemGift,
 } from '$lib/services/cryptogifts'
 
-import type { Observable } from 'rxjs'
 import type { Wallet } from 'ethers'
 import { api } from '$lib/services/api'
+import type { Observable } from 'rxjs'
 
 export let giftMeta: RedeemableGift
 export let contract: Cryptogifts
@@ -32,6 +32,7 @@ $: gift$ = getGift$(hashHash(giftMeta.k))
 $: gift = $gift$
 
 let requestingTransferFee = false
+
 async function requestTransferFee() {
   requestingTransferFee = true
   const keyHash = hash(giftMeta.k)
@@ -44,11 +45,14 @@ async function requestTransferFee() {
   })
   requestingTransferFee = false
 }
+
 let redeeming = false
+$: if (redeeming && $gift$?.status === GiftStatus.REDEEMED) {
+  redeeming = false
+}
 async function triggerRedeemGift() {
   redeeming = true
   await redeemGift(contract, giftMeta.k)
-  redeeming = false
 }
 </script>
 
