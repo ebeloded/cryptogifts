@@ -9,9 +9,10 @@ import { DEV_MODE } from '$lib/env'
 import { browser } from '$app/env'
 import { onMount } from 'svelte'
 import { pingPong } from '$lib/init'
+import { goto } from '$app/navigation'
 
 onMount(() => {
-  console.log('onMount layout')
+  goto('/')
   pingPong()
 })
 </script>
