@@ -12,6 +12,9 @@ const config = {
       fallback: '200.html',
     }),
     vite: {
+      define: {
+        'process.env': process.env,
+      },
       resolve: {
         alias: {
           $components: resolve('./src/components'),

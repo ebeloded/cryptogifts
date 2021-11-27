@@ -1,6 +1,4 @@
 <script lang="ts">
-import { browser } from '$app/env'
-
 import { privateKey } from '$lib/services/localStorage'
 
 let value = privateKey.get()

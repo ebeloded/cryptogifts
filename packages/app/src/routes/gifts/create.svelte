@@ -17,7 +17,6 @@ import { goto } from '$app/navigation'
       <div in:scale={{ start: 0.9 }}>
         <CreateGiftForm
           contract={$contract$}
-          user={$user$}
           network={$network$}
           on:created={({ detail: code }) => goto(`/gifts/${code}`)}
         />
@@ -29,3 +28,4 @@ import { goto } from '$app/navigation'
     {/if}
   </div>
 </div>
+<slot />

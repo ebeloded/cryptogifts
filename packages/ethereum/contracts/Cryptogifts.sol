@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.7;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import 'hardhat/console.sol';
@@ -13,8 +13,7 @@ enum GiftType {
 enum GiftStatus {
   NONE,
   PENDING,
-  REDEEMED,
-  REVOKED
+  REDEEMED
 }
 
 struct Gift {
@@ -30,6 +29,8 @@ struct Gift {
 contract Cryptogifts is Ownable {
   mapping(bytes => Gift) private gifts;
   mapping(address => bytes[]) private giftsBySender;
+  uint256 constant GAS_FOR_GIFT_REDEEM = 100000;
+  uint256 constant GAS_FOR_FEE_REDEEM = 100000;
 
   function getMyGifts() external view returns (Gift[] memory) {
     bytes[] memory keys = giftsBySender[msg.sender];
@@ -43,14 +44,16 @@ contract Cryptogifts is Ownable {
   }
 
   function getRequiredGas() public pure returns (uint256) {
-    // TODO: calculate required gas
-    return 1 wei;
+    return GAS_FOR_FEE_REDEEM + GAS_FOR_GIFT_REDEEM;
+  }
+
+  function getGasRequiredForRedeem() public pure returns (uint256) {
+    return GAS_FOR_GIFT_REDEEM;
   }
 
   error ValueMustBeGreaterThanZero();
   error AmountMustBeGreaterThanZero();
   error ValueMustBeGreaterThanAmount();
-  error NotEnoughGiftGas(uint256 provided, uint256 required);
 
   function putETH(bytes calldata _hashHashKey, uint256 _giftValue)
     external
@@ -66,14 +69,10 @@ contract Cryptogifts is Ownable {
       revert ValueMustBeGreaterThanAmount();
     }
 
-    uint256 requiredGas = getRequiredGas();
-
-    if (msg.value < _giftValue + requiredGas) {
-      revert NotEnoughGiftGas(msg.value - _giftValue, requiredGas);
-    }
-
     // Split the extra value in two
     uint256 giftGas = (msg.value - _giftValue) / 2;
+
+    console.log('giftGas', giftGas);
 
     // One half goes to EOA providing gas to the redeemer
     payable(owner()).transfer(giftGas);
@@ -147,10 +146,6 @@ contract Cryptogifts is Ownable {
       revert GiftAlreadyRedeemed();
     }
 
-    if (_status == GiftStatus.REVOKED) {
-      revert GiftAlreadyRevoked();
-    }
-
     if (_status == GiftStatus.PENDING) {
       return true;
     }
@@ -160,7 +155,7 @@ contract Cryptogifts is Ownable {
 
   error NoGiftGas();
 
-  function provideTransferETH(
+  function provideTransferFee(
     address payable _receiver,
     bytes calldata _hashKey
   ) external onlyOwner {
@@ -183,8 +178,6 @@ contract Cryptogifts is Ownable {
   }
 
   function redeemGift(string calldata _key) external {
-    uint256 u0 = gasleft();
-
     bytes memory hashHashKey = abi.encodePacked(hashHash(_key));
 
     Gift storage gift = gifts[hashHashKey];
@@ -193,8 +186,11 @@ contract Cryptogifts is Ownable {
       gift.status = GiftStatus.REDEEMED;
       gift.redeemer = msg.sender;
       payable(msg.sender).transfer(gift.giftValue);
-    }
 
-    console.log('redeemGift gas used', u0 - gasleft());
+      // if gift redeemed but transferFee wasn not requested
+      if (gift.giftGas > 0) {
+        payable(gift.sender).transfer(gift.giftGas);
+      }
+    }
   }
 }

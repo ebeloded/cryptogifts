@@ -4,7 +4,7 @@ import '$lib/styles/tailwind.css'
 </script>
 
 <script lang="ts">
-import { Navbar, DevPanel } from '$components'
+import { Navbar, DevPanel, FeeData } from '$components'
 import { DEV_MODE } from '$lib/env'
 import { browser } from '$app/env'
 import { onMount } from 'svelte'
@@ -18,6 +18,7 @@ onMount(() => pingPong())
   <slot />
 
   {#if DEV_MODE && browser}
+    <FeeData />
     <DevPanel />
   {/if}
 </div>

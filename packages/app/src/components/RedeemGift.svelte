@@ -9,8 +9,10 @@ import {
   utils,
   GiftStatus,
 } from '@cryptogifts/ethereum'
+import { getBalanceNecessaryToRedeem } from '$lib/services/cryptogifts'
+
 import type { Observable } from 'rxjs'
-import type { Signer, Wallet } from 'ethers'
+import type { Wallet } from 'ethers'
 import { api } from '$lib/services/api'
 
 export let giftMeta: RedeemableGift
@@ -24,11 +26,6 @@ const { balance$, signer } = user
 
 $: gift$ = getGift$(hashHash(giftMeta.k))
 $: gift = $gift$
-
-async function getBalanceNecessaryToRedeem() {
-  // TODO: implement correct balance estimation
-  return utils.parseUnits('0.1', 'ether')
-}
 
 async function requestTransferFee() {
   const keyHash = hash(giftMeta.k)
@@ -49,16 +46,6 @@ async function redeemGift() {
     console.log({ err })
   })
 }
-
-async function getGift() {
-  try {
-    const giftInfo = await contract.get(hashHash(giftMeta.k))
-    console.log({ giftInfo })
-    return giftInfo
-  } catch (err) {
-    console.log('couldnt load gift details', err)
-  }
-}
 </script>
 
 <!-- On the right chain -->
@@ -69,7 +56,7 @@ async function getGift() {
 
   {#if gift.status === GiftStatus.PENDING}
     {#if $balance$ !== void 0 && $balance$ !== null}
-      {#await getBalanceNecessaryToRedeem() then necessaryBalance}
+      {#await getBalanceNecessaryToRedeem(contract) then necessaryBalance}
         {#if $balance$.gte(necessaryBalance)}
           <button class="btn" on:click={redeemGift}>Redeem Gift</button>
         {:else}

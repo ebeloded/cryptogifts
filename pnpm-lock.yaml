@@ -33,6 +33,7 @@ importers:
       '@sveltejs/kit': 1.0.0-next.195
       '@tailwindcss/forms': 0.3.4
       '@tailwindcss/typography': 0.4.1
+      '@types/ramda': 0.27.53
       '@walletconnect/client': 2.0.0-beta.20
       '@walletconnect/qrcode-modal': 1.6.6
       '@walletconnect/web3-provider': 1.6.6
@@ -81,6 +82,7 @@ importers:
       '@sveltejs/kit': 1.0.0-next.195_svelte@3.44.2
       '@tailwindcss/forms': 0.3.4_tailwindcss@2.2.19
       '@tailwindcss/typography': 0.4.1_tailwindcss@2.2.19
+      '@types/ramda': 0.27.53
       autoprefixer: 10.4.0_postcss@8.4.1
       eip1193-provider: 1.0.1
       postcss: 8.4.1
@@ -94,6 +96,7 @@ importers:
   packages/ethereum:
     specifiers:
       '@ethersproject/abi': 5.5.0
+      '@ethersproject/abstract-provider': 5.5.1
       '@ethersproject/bytes': 5.5.0
       '@ethersproject/providers': 5.5.0
       '@metamask/detect-provider': 1.2.0
@@ -131,6 +134,7 @@ importers:
       nanoid: 3.1.30
       rxjs: 7.4.0
     devDependencies:
+      '@ethersproject/abstract-provider': 5.5.1
       '@nomiclabs/hardhat-ethers': 2.0.2_ethers@5.5.1+hardhat@2.7.0
       '@nomiclabs/hardhat-etherscan': 2.1.8_hardhat@2.7.0
       '@nomiclabs/hardhat-waffle': 2.0.1_378923279af3f07dbfcb00671f781586
@@ -2247,6 +2251,12 @@ packages:
 
   /@types/qs/6.9.7:
     resolution: {integrity: sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==}
+
+  /@types/ramda/0.27.53:
+    resolution: {integrity: sha512-+JgHbFSQixoBf7W90XwSOGnMuS6dU2OSlkUEBPtvRsSTAr75Iag91XUOCRlCQC/8OG6Jw1So8CKA36i+NNjymg==}
+    dependencies:
+      ts-toolbelt: 6.15.5
+    dev: true
 
   /@types/range-parser/1.2.4:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
@@ -13388,6 +13398,10 @@ packages:
       make-error: 1.3.6
       typescript: 4.5.2
       yn: 3.1.1
+    dev: true
+
+  /ts-toolbelt/6.15.5:
+    resolution: {integrity: sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A==}
     dev: true
 
   /tslib/1.14.1:

@@ -20,18 +20,31 @@ import type { ChainInfo, FeeData } from './types'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { chains } from './data'
 
+console.log({ chains })
+
 type EthereumProvider = import('eip1193-provider').default
 
 const NoEthereumProviderError = () => new Error('No Ethereum provider found')
 
-const getEthereumProvider = (dev: boolean) =>
+const ADDRESSES = {
+  Localhost: () => import('../addresses/localhost.json'),
+  Hardhat: () => import('../addresses/hardhat.json'),
+  Ropsten: () => import('../addresses/ropsten.json'),
+  Rinkeby: () => import('../addresses/rinkeby.json'),
+}
+
+const getEthereumProvider = (dev: boolean, chainId?: number) =>
   dev
-    ? Promise.resolve(new ethers.providers.JsonRpcProvider()).then(
-        (provider) => ({
-          ethereum: null,
-          provider,
-        }),
-      )
+    ? Promise.resolve(
+        chainId && chains.get(chainId)
+          ? new ethers.providers.JsonRpcProvider({
+              url: chains.get(chainId)?.rpcUrls?.[0]!,
+            })
+          : new ethers.providers.JsonRpcProvider(),
+      ).then((provider) => ({
+        ethereum: null,
+        provider,
+      }))
     : detectEthereumProvider({
         silent: true,
         timeout: 1000,
@@ -43,20 +56,9 @@ const getEthereumProvider = (dev: boolean) =>
         }
       })
 
-const getAddressFile = async (chainId: number) => {
-  const chain = chains.get(chainId)
-
-  switch (chain?.chainName) {
-    case 'Localhost':
-      return import('../addresses/localhost.json')
-    case 'Hardhat':
-      return import('../addresses/hardhat.json')
-    case 'Ropsten':
-      return import('../addresses/ropsten.json')
-    case 'Rinkeby':
-      return import('../addresses/rinkeby.json')
-  }
-}
+const getAddressFile = async (chainId: number) =>
+  ADDRESSES[chains.get(chainId)?.chainName as keyof typeof ADDRESSES]?.() ??
+  void 0
 
 const getContractAddress = (chainId: number) => async () =>
   getAddressFile(chainId).then((file) => {
@@ -66,7 +68,7 @@ const getContractAddress = (chainId: number) => async () =>
 
 export function connectEthereum(privateKey?: string, chainId?: number) {
   console.log('connectEthereum', { chainId })
-  const ethereumProviderPromise = getEthereumProvider(!!privateKey)
+  const ethereumProviderPromise = getEthereumProvider(!!privateKey, chainId)
 
   const ethereumProvider$ = from(ethereumProviderPromise).pipe(
     tap((v) => console.log('ethereumProvider$', v)),

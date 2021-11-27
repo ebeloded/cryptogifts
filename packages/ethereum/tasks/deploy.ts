@@ -1,4 +1,3 @@
-import '@nomiclabs/hardhat-waffle'
 import { task } from 'hardhat/config'
 import fs from 'fs'
 import path from 'path'
