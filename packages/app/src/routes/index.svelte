@@ -29,8 +29,8 @@
   </div>
 </section>
 
-<section id="fetures" class="h-screen">Features</section>
-<section id="how" class="h-screen">How it works</section>
+<section id="how-it-works" class="h-screen">How it works</section>
+<section id="features" class="h-screen">Features</section>
 <section id="faq" class="h-screen">
   <h2>FAQ</h2>
   <p>Can I revoke the gift card?</p>

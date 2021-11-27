@@ -11,7 +11,7 @@ import { user$, contract$, network$ } from '$lib/services/ethereum'
 import { goto } from '$app/navigation'
 </script>
 
-<div class="min-h-screen flex justify-center items-center">
+<div class="-mt-16 min-h-screen flex justify-center items-center">
   <div>
     {#if $user$}
       <div in:scale={{ start: 0.9 }}>
