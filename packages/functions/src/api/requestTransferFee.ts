@@ -40,8 +40,10 @@ export const requestTransferFee = async ({
     const contractTransaction = await contract.provideTransferFee(addr, keyHash)
 
     console.log({ contractTransaction })
+    const receipt = await contractTransaction.wait(1)
 
-    return contractTransaction
+    console.log({ receipt })
+    return 'ok'
   } catch (err) {
     console.error(err)
     throw new Error(`Error providing transfer fee`)
