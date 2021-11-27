@@ -11,14 +11,17 @@ import { onMount } from 'svelte'
 import { pingPong } from '$lib/init'
 
 onMount(() => {
+  console.log('onMount layout')
   pingPong()
 })
 </script>
 
 <div>
-  <Particles />
   <Navbar />
-  <slot />
+  <Particles />
+  <div>
+    <slot />
+  </div>
 
   {#if DEV_MODE && browser}
     <FeeData />

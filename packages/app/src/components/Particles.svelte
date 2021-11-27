@@ -2,6 +2,7 @@
 import { browser } from '$app/env'
 import { onMount } from 'svelte'
 onMount(() => {
+  console.log('remount particle')
   particlesJS('particles-js', {
     particles: {
       number: {
@@ -113,15 +114,7 @@ onMount(() => {
     retina_detect: true,
   })
 })
-if (browser) {
-  console.log('init particles')
-}
 </script>
-
-<svelte:head>
-  <script
-    src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-</svelte:head>
 
 <div
   id="particles-js"
