@@ -30,6 +30,12 @@ const config: HardhatUserConfig =
         url: process.env.KOVAN_URL,
         accounts,
       },
+      fujiAvalanche: {
+        url: 'https://api.avax-test.network/ext/bc/C/rpc',
+        gasPrice: 225000000000,
+        chainId: 43113,
+        accounts,
+      },
     },
     gasReporter: {
       enabled: process.env.REPORT_GAS !== undefined,
