@@ -40,10 +40,14 @@ const form = {
 }
 
 const isValueValid = (value: string) => {
-  return balance.gt(utils.parseEther(value).add(extraFeeValue))
+  try {
+    return balance.gt(utils.parseEther(value).add(extraFeeValue))
+  } catch {
+    return false
+  }
 }
 
-$: amountValid = form.value ? isValueValid(String(form.value)) : true
+$: amountValid = form.value ? isValueValid(form.value) : true
 
 let giftCreation$: null | Observable<any> = null
 
@@ -98,7 +102,7 @@ function addGift() {
         <input
           id="gift-amount"
           bind:value={form.value}
-          type="number"
+          type="text"
           required
           placeholder="in ETH"
           class="input input-bordered"
