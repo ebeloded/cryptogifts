@@ -3,16 +3,20 @@ Allows creating the gift
 -->
 <script lang="ts">
 import { UserBalance } from '$components'
+import c from 'clsx'
 
 import {
   createGiftOfETH,
+  createGiftOfEthObservable,
   encodeGift,
   getExtraFeeValue,
 } from '$lib/services/cryptogifts'
 
 import { Cryptogifts, getChainName, utils } from '$lib/services/ethereum'
 import { BigNumber, chains } from '@cryptogifts/ethereum'
+import { Observable, tap } from 'rxjs'
 import { createEventDispatcher, onMount } from 'svelte'
+import { fade } from 'svelte/transition'
 
 export let contract: Cryptogifts
 export let network: any
@@ -41,38 +45,33 @@ const isValueValid = (value: string) => {
 
 $: amountValid = form.value ? isValueValid(String(form.value)) : true
 
-async function addGift() {
-  try {
-    const gift = await createGiftOfETH(
-      contract,
-      network.chainId,
-      form.message,
-      form.value,
-    )
-    const giftCode = await encodeGift(gift)
+let giftCreation$: null | Observable<any> = null
 
-    dispatch('created', giftCode)
-  } catch (error) {
-    console.log({ error })
-  }
+function addGift() {
+  giftCreation$ = createGiftOfEthObservable(
+    contract,
+    network.chainId,
+    utils.parseEther(String(form.value)),
+  ).pipe(
+    tap({
+      next(giftCreation) {
+        console.log({ giftCreation })
+        if (giftCreation.contractReceipt) {
+          dispatch('created', giftCreation)
+        }
+      },
+      complete() {
+        console.log('done')
+      },
+    }),
+  )
 }
-
-// $: selectedChain = network.chainId
-
-// console.log({ chains })
 </script>
 
-<create-gift-form class="block bg-base-100 p-10 rounded-2xl">
+<div>
+  <h2 class="card-title text-center">Create Gift</h2>
   <form on:submit|preventDefault={addGift}>
     <fieldset class="space-y-6">
-      <!-- <div class="form-control">
-        <label for="network-select" class="label">
-          <span class="label-text">Network</span>
-        </label>
-        <select id="network-select" class="select select-bordered">
-          <option value="">Rinkeby</option>
-        </select>
-      </div> -->
       <div class="form-control">
         <label for="gift-amount" class="label">
           <span class="label-text">Asset Type</span>
@@ -101,7 +100,7 @@ async function addGift() {
           bind:value={form.value}
           type="number"
           required
-          placeholder="in ether"
+          placeholder="in ETH"
           class="input input-bordered"
           class:input-error={!amountValid}
         />
@@ -124,20 +123,78 @@ async function addGift() {
         </div>
         <div class="label">
           <div class="label-text-alt">
-            The total transfer value will include this extra fee required to
-            allow the gift transfer the gift to the recipient
+            The transfer value will include this extra fee to allow gift
+            transfer the gift to the recipient
           </div>
         </div>
       </div>
+
       <div>
         <button
           type="submit"
           disabled={!form.value || !amountValid}
           class="btn btn-outline w-full"
         >
-          Create Gift Card
+          Submit
         </button>
       </div>
     </fieldset>
   </form>
-</create-gift-form>
+  {#if giftCreation$}
+    <div
+      in:fade
+      class="absolute inset-0 flex flex-col bg-base-100/70 backdrop-blur-sm items-center justify-center"
+    >
+      <span class="animate-bounce">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="52"
+          height="52"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-gift"
+        >
+          <polyline points="20 12 20 22 4 22 4 12" />
+          <rect x="2" y="7" width="20" height="5" />
+          <line x1="12" y1="22" x2="12" y2="7" />
+          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+        </svg>
+      </span>
+      <div>
+        <div class="mt-10">
+          <ul class="text-center space-y-4">
+            <li
+              class={c({
+                'opacity-50': $giftCreation$.step < 1,
+                'text-success': $giftCreation$.step >= 1,
+              })}
+            >
+              Generating gift code
+            </li>
+            <li
+              class={c({
+                'opacity-50': $giftCreation$.step < 2,
+                'text-success': $giftCreation$.step >= 3,
+              })}
+            >
+              Sending value to the contract
+            </li>
+            <li
+              class={c({
+                'opacity-50': $giftCreation$.step < 3,
+                'text-success': $giftCreation$.step >= 4,
+              })}
+            >
+              Awaiting first confirmation
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  {/if}
+</div>

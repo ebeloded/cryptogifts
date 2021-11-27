@@ -1,10 +1,11 @@
-import type { Cryptogifts } from '@cryptogifts/ethereum'
+import type { BigNumber, Cryptogifts } from '@cryptogifts/ethereum'
 import type { RedeemableGift } from '$lib/types'
 
 import { Network } from '$lib/types'
 import { utils } from '@cryptogifts/ethereum'
 import { nanoid } from 'nanoid'
-import { getFeeData } from './ethereum'
+import { getFeeData, getGift$ } from './ethereum'
+import { Observable } from 'rxjs'
 
 const GAS_PRICE_MULTIPLIER = 2
 
@@ -68,6 +69,59 @@ export async function createGiftOfETH(
     k: key,
     m: message,
   }
+}
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+export function createGiftOfEthObservable(
+  contract: Cryptogifts,
+  chainId: number,
+  giftValue: BigNumber,
+) {
+  let gift: any = {
+    step: 0,
+  }
+  return new Observable((observer) => {
+    let continueExectuion = true
+    const key = nanoid()
+    gift = { ...gift, key, chainId, step: 1 }
+    observer.next(gift)
+
+    getExtraFeeValue(contract).then((extraFeeValue) => {
+      const value = giftValue.add(extraFeeValue)
+      const hashHashKey = utils.keccak256(
+        utils.keccak256(utils.toUtf8Bytes(key)),
+      )
+      gift = { ...gift, gift$: getGift$(hashHashKey), step: 2 }
+      if (continueExectuion) {
+        observer.next(gift)
+        contract
+          .putETH(hashHashKey, giftValue, {
+            value,
+          })
+          .then(
+            (contractTransaction) => {
+              if (continueExectuion) {
+                gift = { ...gift, contractTransaction, step: 3 }
+                observer.next(gift)
+
+                contractTransaction.wait(1).then((contractReceipt) => {
+                  gift = { ...gift, contractReceipt, step: 4 }
+                  observer.next(gift)
+                  observer.complete()
+                })
+              }
+            },
+            (err) => {
+              observer.error(err)
+            },
+          )
+      }
+    })
+    return () => {
+      continueExectuion = false
+    }
+  })
 }
 
 export async function redeemGift(contract: Cryptogifts, key: string) {

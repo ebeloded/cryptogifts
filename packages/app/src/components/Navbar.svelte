@@ -1,9 +1,21 @@
 <script lang="ts">
+import c from 'clsx'
 import { InstallOrConnectGuard, UserMenu } from '.'
 import { user$ } from '$lib/services/ethereum'
+
+let y = 0
+
+$: scrolled = y > 20
 </script>
 
-<header class="sticky navbar inset-x-0 top-0 h-16">
+<svelte:window bind:scrollY={y} />
+
+<header
+  class={c(
+    'sticky navbar inset-x-0 top-0 h-16 z-20',
+    scrolled && 'bg-base-100/70 backdrop-blur-sm',
+  )}
+>
   <div class="flex-none px-2 mx-2">
     <a
       href="/"
@@ -15,12 +27,25 @@ import { user$ } from '$lib/services/ethereum'
   </div>
   <div class="flex-1 px-2 mx-2">
     <div class="items-stretch hidden lg:flex">
-      <a href="/#how-it-works" class="btn btn-ghost btn-sm rounded-btn">
+      <a
+        href="/#how-it-works"
+        class="btn btn-ghost btn-sm rounded-btn no-animation"
+      >
         How It Works
       </a>
-      <a href="/#features" class="btn btn-ghost btn-sm rounded-btn">Features</a>
-      <a href="/#features" class="btn btn-ghost btn-sm rounded-btn">FAQ</a>
-      <a href="/#source-code" class="btn btn-ghost btn-sm rounded-btn">
+      <a
+        href="/#features"
+        class="btn btn-ghost btn-sm rounded-btn no-animation"
+      >
+        Features
+      </a>
+      <a href="/#faq" class="btn btn-ghost btn-sm rounded-btn no-animation">
+        FAQ
+      </a>
+      <a
+        href="/#source-code"
+        class="btn btn-ghost btn-sm rounded-btn no-animation"
+      >
         Source Code
       </a>
     </div>
