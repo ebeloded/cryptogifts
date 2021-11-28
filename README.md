@@ -28,7 +28,7 @@ If the redeemer doesn't have any crypto, they can't pay gas fees to redeem the f
 
 Asset types:
 
-- [ x ETH
+- [x] ETH
 - [ ] ERC20
 - [ ] ERC721 (NFT)
 
