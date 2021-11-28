@@ -34,7 +34,7 @@ async function onGiftCreated({ key, chainId }: any) {
     Loading...
   {:else}
     <InstallOrConnectGuard>
-      {#if $contract$}
+      {#if $user$ && $contract$}
         <div class="mx-auto w-full max-w-md" in:scale={{ start: 0.9 }}>
           <div
             class="block bg-base-100 p-10 rounded-2xl relative overflow-hidden shadow-2xl"
