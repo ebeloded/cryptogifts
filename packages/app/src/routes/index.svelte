@@ -1,3 +1,13 @@
+<script lang="ts">
+import { prefetchRoutes } from '$app/navigation'
+
+import { onMount } from 'svelte'
+
+onMount(() => {
+  prefetchRoutes(['/gifts/create', '/gifts/redeem', '/gifts'])
+})
+</script>
+
 <section class="hero h-screen -mt-16">
   <div class="text-center hero-content">
     <div class="w-2/3">
