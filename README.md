@@ -28,7 +28,7 @@ If the redeemer doesn't have any crypto, they can't pay gas fees to redeem the f
 
 Asset types:
 
-- [ ] ETH
+- [ x ETH
 - [ ] ERC20
 - [ ] ERC721 (NFT)
 
@@ -36,10 +36,10 @@ Layer 1:
 
 Testnets:
 
-- [ ] Rinkeby
-- [ ] Ropsten
-- [ ] Kovan
-- [ ] Avalanche FUJI testnet
+- [x] Rinkeby
+- [x] Ropsten
+- [x] Kovan
+- [x] Avalanche FUJI testnet
 
 Mainnets:
 
