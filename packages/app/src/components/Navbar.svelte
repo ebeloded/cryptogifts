@@ -39,9 +39,9 @@ $: scrolled = y > 20
       >
         Features
       </a>
-      <a href="/#faq" class="btn btn-ghost btn-sm rounded-btn no-animation">
+      <!-- <a href="/#faq" class="btn btn-ghost btn-sm rounded-btn no-animation">
         FAQ
-      </a>
+      </a> -->
       <!-- <a
         href="/#source-code"
         class="btn btn-ghost btn-sm rounded-btn no-animation"
@@ -50,7 +50,7 @@ $: scrolled = y > 20
       </a> -->
     </div>
   </div>
-  <div class="flex-none">
+  <div class="flex-none hidden sm:block">
     <InstallOrConnectGuard>
       {#if $user$}
         <UserMenu user={$user$} />
